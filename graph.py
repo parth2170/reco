@@ -101,3 +101,12 @@ plt.show()
 
 print("Saving Graph as pickle")
 nx.write_gpickle(G, "network.gpickle")
+
+print("Saving graph edges as text file")
+all_edges = pue + new_ppe
+f = open('edges.txt', 'w')
+for t in all_edges:
+    line = ' '.join(str(x) for x in t)
+    f.write(line + '\n')
+f.close()
+
