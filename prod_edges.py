@@ -7,7 +7,7 @@ def bought_together():
 	print("\nOpening meta-data File")
 	unrelated = []
 	edges = []
-	with open('meta.json', 'r') as file:
+	with open('data/meta.json', 'r') as file:
 		for line in file:
 			if(i%100 == 0):
 				print(i)

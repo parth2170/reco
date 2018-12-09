@@ -9,7 +9,7 @@ from prod_edges import bought_together
 def read_data(data):
 	i = 0
 	print("\nOpening Reviews File")
-	with open('reviews.json', 'r') as file:
+	with open('data/reviews.json', 'r') as file:
 		for line in file:
 			if(i%100 == 0):
 				print(i)
@@ -100,13 +100,17 @@ nx.draw_networkx_edges(G,pos, edgelist = new_ppe, width=8, alpha=0.5,edge_color=
 plt.show()
 
 print("Saving Graph as pickle")
-nx.write_gpickle(G, "network.gpickle")
+nx.write_gpickle(G, "saved/network.gpickle")
 
 print("Saving graph edges as text file")
 all_edges = pue + new_ppe
-f = open('edges.txt', 'w')
+f = open('saved/edges.txt', 'w')
 for t in all_edges:
     line = ' '.join(str(x) for x in t)
     f.write(line + '\n')
 f.close()
+
+print("Saving users and products list as npy files")
+np.save("saved/users_master.npy", users)
+np.save("saved/prods_master.npy", prods)
 
