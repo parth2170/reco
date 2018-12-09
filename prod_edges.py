@@ -3,6 +3,7 @@ import ast
 
 def bought_together():
 	#prod-prod edge occours if they have been bought together according to metadata
+	#use in complete data
 	i = 0
 	print("\nOpening meta-data File")
 	unrelated = []

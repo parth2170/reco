@@ -9,12 +9,10 @@ from prod_edges import bought_together
 def read_data(data):
 	i = 0
 	print("\nOpening Reviews File")
-	with open('data/reviews.json', 'r') as file:
+	with open('data/sample/reviews.json', 'r') as file:
 		for line in file:
 			if(i%100 == 0):
 				print(i)
-			if(i==1000):
-				break
 			jline = json.loads(line)
 			i+=1
 			dt = dict((k, jline[k]) for k in ('reviewerID', 'asin', 'overall'))
@@ -35,8 +33,8 @@ def user_user_edge(data, smp):
 	return None
 
 def prod_prod_edge():
-	edges, unrelated = bought_together()
-	return edges
+	
+	return None
 
 #set parameter smp
 smp = 5

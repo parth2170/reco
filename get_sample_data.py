@@ -2,7 +2,7 @@ import pickle
 import array
 import ast
 import json
-
+import numpy as np 
 
 def readImageFeatures(path):
   f = open(path, 'rb')
