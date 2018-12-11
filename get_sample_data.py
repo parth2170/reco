@@ -44,14 +44,14 @@ def meta_sample():
 	unrelated = []
 	edges = []
 	i = 0
-	fo = open("data/sample/meta_sample", "w")
+	fo = open("data/sample/meta_sample", "wb")
 	with open('data/meta.json', 'r') as file:
 		for line in file:
 			if(i%10000 == 0):
 				print(i)
 			jline = ast.literal_eval(line)
 			if jline['asin'] in prod_feat_ref_list:
-				fo.write(json.dumps(jline))
+				pickle.dump(jline, fo, protocol=pickle.HIGHEST_PROTOCOL)
 			i+=1
 	fo.close()
 	print("Meta Sample Created")
@@ -59,7 +59,7 @@ def meta_sample():
 def rev_sample():
 	i = 0
 	print("\nOpening Reviews File")
-	fo = open("data/sample/reviews_sample", "w")
+	fo = open("data/sample/reviews_sample", "wb")
 	with open('data/reviews.json', 'r') as file:
 		for line in file:
 			if(i%10000 == 0):
@@ -67,7 +67,7 @@ def rev_sample():
 			jline = json.loads(line)
 			i+=1
 			if jline['asin'] in prod_feat_ref_list:
-				fo.write(json.dumps(jline))
+				pickle.dump(jline, fo, protocol=pickle.HIGHEST_PROTOCOL)
 	fo.close()
 	print("Reviews Sample Created")
 
