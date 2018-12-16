@@ -1,3 +1,6 @@
+#Gets 1000 images from the images file, finds coreresponding reviews and metadata and creates their sample
+#input - raw data files
+#outputs - reviews_sample, meta_sample, prod->feature dictionary, prods->feat dictionary, prods_ref_list, features_list
 import pickle 
 import array
 import ast
@@ -33,9 +36,9 @@ for image in readImageFeatures("data/image_features"):
 	i -= 1
 
 print("Saving")
-np.save("data/sample/prod_feat_ref_list.npy", prod_feat_ref_list)
-np.save("data/sample/feat_list.npy", feat_list)
-with open('data/sample/feat_dict.pickle', 'wb') as fp:
+np.save("saved/prod_feat_ref_list.npy", prod_feat_ref_list)
+np.save("saved/feat_list.npy", feat_list)
+with open('saved/feat_dict.pickle', 'wb') as fp:
     pickle.dump(feat_dict, fp, protocol=pickle.HIGHEST_PROTOCOL)
 
 
@@ -44,7 +47,7 @@ def meta_sample():
 	unrelated = []
 	edges = []
 	i = 0
-	fo = open("data/sample/meta_sample", "wb")
+	fo = open("saved/meta_sample", "wb")
 	with open('data/meta.json', 'r') as file:
 		for line in file:
 			if(i%10000 == 0):
@@ -59,7 +62,7 @@ def meta_sample():
 def rev_sample():
 	i = 0
 	print("\nOpening Reviews File")
-	fo = open("data/sample/reviews_sample", "wb")
+	fo = open("saved/reviews_sample", "wb")
 	with open('data/reviews.json', 'r') as file:
 		for line in file:
 			if(i%10000 == 0):
