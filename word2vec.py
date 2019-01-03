@@ -17,7 +17,7 @@ from input_skip_gram import Options
 from skip_gram_mod import skipgram
 
 class word2vec:
-	def __init__(self, inputfile, vocabulary_size = 500, embedding_dim = 300, epoch_num = 10, batch_size = 16, window_size = 5, neg_sample_num = 10):
+	def __init__(self, inputfile, vocabulary_size = 8000, embedding_dim = 300, epoch_num = 10, batch_size = 16, window_size = 5, neg_sample_num = 10):
 		self.op = Options(inputfile, vocabulary_size)
 		self.embedding_dim = embedding_dim
 		self.window_size = window_size
@@ -65,12 +65,12 @@ class word2vec:
 
 				optimizer.step()
 
-				if batch_num % 60 == 0:
+				if batch_num % 20000 == 0:
 					print("Saving model")
 					torch.save(model.state_dict(), 'skip_gram/tmp/skipgram.epoch{}.batch{}'.format(epoch,batch_num))
 					print("Saving Embeddings")
 					model.save_embedding('skip_gram/tmp/embeddings.epoch{}.batch{}.pickle'.format(epoch,batch_num))
-				if batch_num%10 == 0:
+				if batch_num%2000 == 0:
 					end = time.time()
 					word_embeddings = model.input_embeddings()
 					print('epoch = {} batch = {} loss = {} time = {}'.format(epoch, batch_num, loss, end - start))
