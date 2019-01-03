@@ -118,13 +118,21 @@ def graph():
 def node2vec(graph):
 	if graph == None:
 		graph = nx.read_gpickle(network_path+"network.gpickle")
-	node2vec = Node2Vec(graph, dimensions=300, walk_length=30, num_walks=500, workers=4) 
+	node2vec = Node2Vec(graph, dimensions=300, walk_length=30, num_walks=300, workers=4) 
 	model = node2vec.fit(window=8, min_count=1, batch_words=5)
 	model.wv.save_word2vec_format(outfiles+"sample_node2vec_embeddings")
 	model.save(outfiles+"sample_model")
+	print("Saving npy")
+	np.save(outfiles+"sample_paths_node2vec.npy", node2vec.walks)
+	print("saving txt")
+	with open(outfiles+"sample_paths_node2vec.txt", 'w') as foo:
+		for q in node2vec.walks:
+			path = ' '.join(q)
+			outline = path+"\n"
+			foo.write(outline)
 
-	with open(outfiles+'sample_paths_node2vec.pickle', 'wb') as fp:
-	    pickle.dump(node2vec.walks, fp, protocol=pickle.HIGHEST_PROTOCOL)
+	#with open(outfiles+'sample_paths_node2vec.pickle', 'wb') as fp:
+	    #pickle.dump(node2vec.walks, fp, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def build_svd_feat_file():
@@ -140,7 +148,7 @@ def build_svd_feat_file():
 			node = temp[0]
 			emb = list(map(float, temp[1][:-1].split()))
 			emb_data[node] = emb 
-
+	print("No. of embeddings made = {}".format(len(emb_data)))
 	#Read reviews data from reviews file
 	data = []
 	with open(reviews_file, 'rb') as file:
@@ -154,15 +162,23 @@ def build_svd_feat_file():
 	data = pd.DataFrame(data)
 	users = set(data['reviewerID'])
 	prods = set(data['asin'])
+	print("No. of product reviews = {}".format(len(data)))
 	print("num_users - {} num_prods - {}".format(len(users), len(prods)))
 	user_codes = {item:val for val,item in enumerate(users)}
 	product_codes = {item:val for val,item in enumerate(prods)}
 
 	#Construct SVDFeature input file
+	
+	i = 0
 	with open(outfiles+"SVDFeature_input.txt", 'w') as file:
 		for index, row in data.iterrows():
-			line1 = str(int(row['overall'])) + " " + str(0) + " " + str(300) + " " + str(300) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + str(emb_data[row['asin']])[1:-1].replace(", ", " "+ str(product_codes[row['asin']]) + ":") + "\n"
-			file.write(line1)
+			try:
+				i +=1
+				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(300) + " " + str(300) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + str(emb_data[row['asin']])[1:-1].replace(", ", " "+ str(product_codes[row['asin']]) + ":") + "\n"
+				file.write(line1)
+			except KeyError as error:
+				print(error)
+	print("Number of examples in SVDFeature = {}".format(i))
 
 def main():
 	print("\nEnter 1 to read data and build graph")
