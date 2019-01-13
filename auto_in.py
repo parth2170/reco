@@ -126,6 +126,11 @@ def readImageFeatures(path):
     a.fromfile(f, 4096)
     yield asin, a.tolist()
 
+def saver(cat_prod, cat_feat, n):
+	for cat in cat_prod:
+		np.save('saved/{}{}.npy'.format(cat, str(n)), cat_prod[cat])
+		np.save('saved/{}{}_feat_list.npy'.format(cat, str(n)), cat_feat[cat])
+
 
 def image_to_npy(image_path, prod_cats):
 	all_prod_feat_ref_list = []
@@ -133,6 +138,7 @@ def image_to_npy(image_path, prod_cats):
 	i = 1
 	cat_feat = {}
 	cat_prod = {}
+	j = 0
 	print("Reading Images")
 	for image in readImageFeatures(image_path):
 		if i%20000 == 0:
@@ -155,10 +161,14 @@ def image_to_npy(image_path, prod_cats):
 				if cat not in cat_feat:
 					cat_feat[cat] = []
 				cat_feat[cat].append(ft)
-	print("Saving")
-	for cat in cat_prod:
-		np.save('saved/{}.npy'.format(cat), cat_prod[cat])
-		np.save('saved/{}_feat_list.npy'.format(cat), cat_feat[cat])
+		if i%150000 == 0:
+			print("Saving")
+			saver(cat_prod, cat_feat, j)
+			j+=1
+			del cat_feat
+			del cat_prod
+			cat_feat = {}
+			cat_prod = {}
 
 	np.save("saved/total.npy", all_prod_feat_ref_list)
 	np.save("saved/all_feat_list.npy", all_feat_list)
@@ -171,7 +181,7 @@ if __name__ == '__main__':
 	for i in pc:
 		print('{}  {}'.format(i, len(pc[i])))
 	map(pc)
-	relation('data/meta.json', pc)
+	#relation('data/meta.json', pc)
 	image_to_npy('data/image_features', pc)
 
 
