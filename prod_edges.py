@@ -3,7 +3,7 @@ import ast
 import pickle
 import numpy as np 
 
-prods_master = np.load("saved/prod_feat_ref_list.npy")
+#prods_master = np.load("saved/prod_feat_ref_list.npy")
 
 def bought_together(path, ispickle):
 	#prod-prod edge occours if they have been bought together according to metadata
@@ -24,8 +24,8 @@ def bought_together(path, ispickle):
 						bt = [j for i in bt for j in i]
 						bt = list(set(bt))
 						for p in bt:
-							if (p in prods_master) and (prod_id in prods_master):
-								edges.append((prod_id, p))
+							#if (p in prods_master) and (prod_id in prods_master):
+							edges.append((prod_id, p))
 					except KeyError as error:
 						unrelated.append(jline['asin'])
 				except EOFError:
@@ -44,8 +44,8 @@ def bought_together(path, ispickle):
 					bt = [j for i in bt for j in i]
 					bt = list(set(bt))
 					for p in bt:
-						if (p in prods_master) and (prod_id in prods_master):
-								edges.append((prod_id, p))
+						#if (p in prods_master) and (prod_id in prods_master):
+							edges.append((prod_id, p))
 				except KeyError as error:
 					unrelated.append(jline['asin'])
 	print("Data read")
