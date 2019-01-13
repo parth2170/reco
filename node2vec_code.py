@@ -1,6 +1,7 @@
 import sys
 import json
 import pickle
+import psutil
 import numpy as np 
 import pandas as pd 
 import networkx as nx 
@@ -32,7 +33,7 @@ def prod_user_edge(path, ispickle, min_rating):
 	else:
 		with open(path, 'r') as file:
 			for line in file:
-				if(i%100 == 0):
+				if(i%10000 == 0):
 					print(i)
 				jline = json.loads(line)
 				i+=1
@@ -52,7 +53,7 @@ def user_user_edge(smp):
 	return None
 
 def prod_prod_edge():
-	edges, unrelated = bought_together(path = 'saved/meta_sample', ispickle = True)
+	edges, unrelated = bought_together(path = 'data/meta.json', ispickle = False)
 	return edges
 
 def graph():
@@ -60,7 +61,7 @@ def graph():
 	smp = 5
 	min_rating = 2
 
-	pue, data = prod_user_edge(path = 'saved/reviews_sample', ispickle = True, min_rating = min_rating)
+	pue, data = prod_user_edge(path = 'data/reviews.json', ispickle = False, min_rating = min_rating)
 	uue = user_user_edge(smp)
 	ppe = prod_prod_edge()
 	users = list(set(data['reviewerID']))
@@ -118,18 +119,18 @@ def graph():
 def node2vec(graph):
 	if graph == None:
 		graph = nx.read_gpickle(network_path+"network.gpickle")
-	node2vec = Node2Vec(graph, dimensions=300, walk_length=30, num_walks=300, workers=4) 
-	model = node2vec.fit(window=8, min_count=1, batch_words=5)
-	model.wv.save_word2vec_format(outfiles+"sample_node2vec_embeddings")
-	model.save(outfiles+"sample_model")
-	print("Saving npy")
-	np.save(outfiles+"sample_paths_node2vec.npy", node2vec.walks)
-	print("saving txt")
+
+	node2vec = Node2Vec(graph, dimensions=300, walk_length=25, num_walks=200, workers=int(psutil.cpu_count())) 
+	print("Saving paths as txt")
 	with open(outfiles+"sample_paths_node2vec.txt", 'w') as foo:
 		for q in node2vec.walks:
 			path = ' '.join(q)
 			outline = path+"\n"
 			foo.write(outline)
+	print("Saved")
+	model = node2vec.fit(window=8, min_count=1, batch_words=5)
+	model.wv.save_word2vec_format(outfiles+"sample_node2vec_embeddings")
+	model.save(outfiles+"sample_model")
 
 	#with open(outfiles+'sample_paths_node2vec.pickle', 'wb') as fp:
 	    #pickle.dump(node2vec.walks, fp, protocol=pickle.HIGHEST_PROTOCOL)

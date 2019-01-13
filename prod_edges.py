@@ -33,14 +33,16 @@ def bought_together(path, ispickle):
 	else:
 		with open(path, 'r') as file:
 			for line in file:
-				if(i%100 == 0):
+				if(i%10000 == 0):
 					print(i)
 				jline = ast.literal_eval(line)
 				i+=1
 				try:
 					dt = dict((k, jline[k]) for k in ('asin', 'related'))
 					prod_id = dt['asin']
-					bt = dt['related']['bought_together']
+					bt = [dt['related'][keys] for keys in dt['related'].keys()]
+					bt = [j for i in bt for j in i]
+					bt = list(set(bt))
 					for p in bt:
 						if (p in prods_master) and (prod_id in prods_master):
 								edges.append((prod_id, p))
