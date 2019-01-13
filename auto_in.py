@@ -68,7 +68,7 @@ def relation(meta_data_path, prod_cats):
 	count = 1
 	with open(meta_data_path, 'r') as file:
 		for line in file:
-			if count%1 == 0:
+			if count%20000 == 0:
 				print(count)
 			count += 1
 			jline = ast.literal_eval(line)
@@ -106,6 +106,7 @@ def relation(meta_data_path, prod_cats):
 	av.close()
 	bot.close()
 	bav.close()
+	print("files saved")
 
 def map(prod_cats):
 	for cat in prod_cats:
@@ -136,19 +137,24 @@ def image_to_npy(image_path, prod_cats):
 	for image in readImageFeatures(image_path):
 		if i%20000 == 0:
 			print(i)
+		i += 1
 		im, ft = image
 		im = im.decode("utf-8")
 		all_prod_feat_ref_list.append(im)
 		all_feat_list.append(ft)
+		tcat = None
+		try:
+			tcat = map_dict[im]
+		except KeyError:
+			continue
 		for cat in prod_cats:
-			if im in prod_cats[cat]:
+			if cat in tcat:
 				if cat not in cat_prod:
 					cat_prod[cat] = []
 				cat_prod[cat].append(im)
 				if cat not in cat_feat:
 					cat_feat[cat] = []
 				cat_feat[cat].append(ft)
-		i += 1
 	print("Saving")
 	for cat in cat_prod:
 		np.save('saved/{}.npy'.format(cat), cat_prod[cat])
@@ -165,7 +171,8 @@ if __name__ == '__main__':
 	for i in pc:
 		print('{}  {}'.format(i, len(pc[i])))
 	map(pc)
-	#image_to_npy('data/image_features', pc)
 	relation('data/meta.json', pc)
+	image_to_npy('data/image_features', pc)
+
 
 
