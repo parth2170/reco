@@ -128,8 +128,12 @@ def readImageFeatures(path):
 
 def saver(cat_prod, cat_feat, n):
 	for cat in cat_prod:
-		np.save('saved/{}{}.npy'.format(cat, str(n)), cat_prod[cat])
-		np.save('saved/{}{}_feat_list.npy'.format(cat, str(n)), cat_feat[cat])
+		np.save('saved/{}{}_prod_feat_ref_list.npy'.format(cat, str(n)), cat_prod[cat])
+		np.save('saved/{}{}.npy'.format(cat, str(n)), cat_feat[cat])
+	
+	np.save("saved/all{}_prod_feat_ref_list.npy".format(str(n)), all_prod_feat_ref_list)
+	np.save("saved/all{}.npy".format(str(n)), all_feat_list)
+
 
 
 def image_to_npy(image_path, prod_cats):
@@ -167,11 +171,13 @@ def image_to_npy(image_path, prod_cats):
 			j+=1
 			del cat_feat
 			del cat_prod
+			del all_feat_list
+			del all_prod_feat_ref_list
 			cat_feat = {}
 			cat_prod = {}
+			all_prod_feat_ref_list = []
+			all_feat_list = []
 
-	np.save("saved/total.npy", all_prod_feat_ref_list)
-	np.save("saved/all_feat_list.npy", all_feat_list)
 
 if __name__ == '__main__':
 	#pc, u =read_meta('data/meta.json')
