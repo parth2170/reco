@@ -4,6 +4,8 @@ import ast
 import array
 import pickle
 
+map_dict = {}
+
 def read_meta(meta_data_path):
 	unrelated = []
 	prod_cats = {}
@@ -77,17 +79,17 @@ def relation(meta_data_path, prod_cats):
 				continue
 
 			prod_id = dt['asin']
+			tcat = map_dict[prod_id]
 			bt = dt['related']
 			for relation in bt:
 				rel_p = bt[relation]
-				tcat = None
 				temp = []
-				for cat in prod_cats:
-					if prod_id in prod_cats[cat]:
-						tcat = cat
 				for t in rel_p:
-					if t in prod_cats[tcat]:
-						temp.append(t)
+					try:
+						if map_dict[t] in tcat:
+							temp.append(t)
+					except KeyError:
+						continue
 				rel_p = temp
 				line = str(prod_id) + " " + str(relation) + " " + ' '.join(rel_p) + "\n"
 				if relation == 'also_bought':
@@ -105,6 +107,14 @@ def relation(meta_data_path, prod_cats):
 	bot.close()
 	bav.close()
 
+def map(prod_cats):
+	for cat in prod_cats:
+		for prod in prod_cats[cat]:
+			try:
+				map_dict[prod].append(cat)
+			except:
+				map_dict[prod] = [cat]
+				
 
 def readImageFeatures(path):
   f = open(path, 'rb')
@@ -141,10 +151,10 @@ def image_to_npy(image_path, prod_cats):
 		i += 1
 	print("Saving")
 	for cat in cat_prod:
-		np.save('saved/{}_prod_feat_ref_list.npy'.format(cat), cat_prod[cat])
+		np.save('saved/{}.npy'.format(cat), cat_prod[cat])
 		np.save('saved/{}_feat_list.npy'.format(cat), cat_feat[cat])
 
-	np.save("saved/all_prod_feat_ref_list.npy", all_prod_feat_ref_list)
+	np.save("saved/total.npy", all_prod_feat_ref_list)
 	np.save("saved/all_feat_list.npy", all_feat_list)
 
 if __name__ == '__main__':
@@ -154,6 +164,7 @@ if __name__ == '__main__':
 	print("Dictionary Read")
 	for i in pc:
 		print('{}  {}'.format(i, len(pc[i])))
+	map(pc)
 	#image_to_npy('data/image_features', pc)
 	relation('data/meta.json', pc)
 
