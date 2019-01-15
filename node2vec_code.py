@@ -102,17 +102,17 @@ def graph():
 	print("Saving Graph as pickle")
 	nx.write_gpickle(G, outfiles+"network.gpickle")
 
-	print("Saving graph edges as text file")
-	all_edges = pue + ppe
-	f = open(outfiles+'edges.txt', 'w')
-	for t in all_edges:
-	    line = ' '.join(str(x) for x in t)
-	    f.write(line + '\n')
-	f.close()
+	#print("Saving graph edges as text file")
+	#all_edges = pue + ppe
+	#f = open(outfiles+'edges.txt', 'w')
+	#for t in all_edges:
+	#    line = ' '.join(str(x) for x in t)
+	#    f.write(line + '\n')
+	#f.close()
 
-	print("Saving users and products list as npy files")
-	np.save(outfiles+"users_node2vec.npy", users)
-	np.save(outfiles+"prods_node2vec.npy", prods)
+	#print("Saving users and products list as npy files")
+	#np.save(outfiles+"users_node2vec.npy", users)
+	#np.save(outfiles+"prods_node2vec.npy", prods)
 	return G
 
 
@@ -120,7 +120,7 @@ def node2vec(graph):
 	if graph == None:
 		graph = nx.read_gpickle(network_path+"network.gpickle")
 
-	node2vec = Node2Vec(graph, dimensions=300, walk_length=25, num_walks=200, workers=int(psutil.cpu_count())) 
+	node2vec = Node2Vec(graph, dimensions=300, walk_length=20, num_walks=100, workers=int(psutil.cpu_count())) 
 	print("Saving paths as txt")
 	with open(outfiles+"sample_paths_node2vec.txt", 'w') as foo:
 		for q in node2vec.walks:
@@ -192,7 +192,7 @@ def main():
 		G = graph()
 	if task == 2 or task == 4:
 		node2vec(graph = G)
-	if task == 3 or task == 4:
+	if task == 3:
 		build_svd_feat_file()
 
 if __name__ == '__main__':

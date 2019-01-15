@@ -3,6 +3,7 @@ import json
 import ast
 import array
 import pickle
+import gc
 
 map_dict = {}
 
@@ -126,7 +127,7 @@ def readImageFeatures(path):
     a.fromfile(f, 4096)
     yield asin, a.tolist()
 
-def saver(cat_prod, cat_feat, n):
+def saver(cat_prod, cat_feat, n, all_feat_list, all_prod_feat_ref_list):
 	for cat in cat_prod:
 		np.save('saved/{}{}_prod_feat_ref_list.npy'.format(cat, str(n)), cat_prod[cat])
 		np.save('saved/{}{}.npy'.format(cat, str(n)), cat_feat[cat])
@@ -165,9 +166,9 @@ def image_to_npy(image_path, prod_cats):
 				if cat not in cat_feat:
 					cat_feat[cat] = []
 				cat_feat[cat].append(ft)
-		if i%150000 == 0:
+		if i%300000 == 0:
 			print("Saving")
-			saver(cat_prod, cat_feat, j)
+			saver(cat_prod, cat_feat, j, all_feat_list, )
 			j+=1
 			del cat_feat
 			del cat_prod
@@ -177,6 +178,8 @@ def image_to_npy(image_path, prod_cats):
 			cat_prod = {}
 			all_prod_feat_ref_list = []
 			all_feat_list = []
+			gc.collect()
+
 
 
 if __name__ == '__main__':
