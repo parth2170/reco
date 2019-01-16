@@ -195,7 +195,6 @@ def main():
 		if G == None:
 			G = nx.read_gpickle(network_path+"network.gpickle")
 
-		G = nx.nx.fast_gnp_random_graph(n=100, p=0.5)
 		t1 = datetime.datetime.now()
 		print("Splitting graph into Two")
 		#bi = community.kernighan_lin_bisection(G)
