@@ -3,6 +3,7 @@ import sys
 import json
 import pickle
 import psutil
+import random
 import datetime
 import numpy as np 
 import pandas as pd 
@@ -193,14 +194,23 @@ def main():
 	if task == 2 or task == 4:
 		if G == None:
 			G = nx.read_gpickle(network_path+"network.gpickle")
+
+		G = nx.nx.fast_gnp_random_graph(n=100, p=0.5)
 		t1 = datetime.datetime.now()
 		print("Splitting graph into Two")
-		bi = community.kernighan_lin_bisection(G)
+		#bi = community.kernighan_lin_bisection(G)
+		bi = list(G.nodes())
+		random.shuffle(bi)
+		subG_size = int(len(bi)/2)
 		t2 = datetime.datetime.now()
 		print("Time taken = {}".format(t2-t1))
 		print("Making subgraphs")
-		g1 = G.subgraph(list(bi[0]))
-		g2 = G.subgraph(list(bi[1]))
+		g1 = G.subgraph(list(bi[:subG_size]))
+		g2 = G.subgraph(list(bi[subG_size:]))
+		print("Sub Graph 1 Information")
+		print(nx.info(g1))
+		print("Sub Graph 2 Information")
+		print(nx.info(g2))
 		del G
 		gc.collect()
 		print("Saving subgraphs")
