@@ -1,13 +1,16 @@
+import gc
 import sys
 import json
 import pickle
 import psutil
+import datetime
 import numpy as np 
 import pandas as pd 
 import networkx as nx 
 from node2vec import Node2Vec
 from matplotlib import pyplot as plt 
-from prod_edges import bought_together 
+from prod_edges import bought_together
+from networkx.algorithms import community 
 
 user_codes = {}
 product_codes = {}
@@ -116,21 +119,18 @@ def graph():
 	return G
 
 
-def node2vec(graph):
-	if graph == None:
-		graph = nx.read_gpickle(network_path+"network.gpickle")
-
+def node2vec(graph, name):
 	node2vec = Node2Vec(graph, dimensions=300, walk_length=20, num_walks=100, workers=int(psutil.cpu_count())) 
 	print("Saving paths as txt")
-	with open(outfiles+"sample_paths_node2vec.txt", 'w') as foo:
+	with open(outfiles+"sample_paths_node2vec{}.txt".format(name), 'w') as foo:
 		for q in node2vec.walks:
 			path = ' '.join(q)
 			outline = path+"\n"
 			foo.write(outline)
 	print("Saved")
 	model = node2vec.fit(window=8, min_count=1, batch_words=5)
-	model.wv.save_word2vec_format(outfiles+"sample_node2vec_embeddings")
-	model.save(outfiles+"sample_model")
+	model.wv.save_word2vec_format(outfiles+"sample_node2vec_embeddings{}".format(name))
+	#model.save(outfiles+"sample_model")
 
 	#with open(outfiles+'sample_paths_node2vec.pickle', 'wb') as fp:
 	    #pickle.dump(node2vec.walks, fp, protocol=pickle.HIGHEST_PROTOCOL)
@@ -191,7 +191,25 @@ def main():
 	if task == 1 or task == 4:
 		G = graph()
 	if task == 2 or task == 4:
-		node2vec(graph = G)
+		if G == None:
+			G = nx.read_gpickle(network_path+"network.gpickle")
+		t1 = datetime.datetime.now()
+		print("Splitting graph into Two")
+		bi = community.kernighan_lin_bisection(G)
+		t2 = datetime.datetime.now()
+		print("Time taken = {}".format(t2-t1))
+		print("Making subgraphs")
+		g1 = G.subgraph(list(bi[0]))
+		g2 = G.subgraph(list(bi[1]))
+		del G
+		gc.collect()
+		print("Saving subgraphs")
+		nx.write_gpickle(g1, outfiles+"subnetwork1.gpickle")
+		nx.write_gpickle(g2, outfiles+"subnetwork2.gpickle")
+		t1 = datetime.datetime.now()
+		print("Time taken = {}".format(t1-t2))
+		node2vec(graph = g1, name = 1)
+		node2vec(graph = g2, name = 2)
 	if task == 3:
 		build_svd_feat_file()
 
