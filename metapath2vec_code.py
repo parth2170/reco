@@ -36,7 +36,7 @@ def read_data(reviews, ispickle, min_rating):
 		with open(reviews, 'r') as file:
 			for line in file:
 				if(i%100000 == 0):
-					print(i)
+					print(i)					
 				jline = json.loads(line)
 				i+=1
 				dt = dict((k, jline[k]) for k in ('reviewerID', 'asin', 'overall'))
@@ -49,12 +49,10 @@ def read_data(reviews, ispickle, min_rating):
 						prod_user_dict[dt['asin']].append(dt['reviewerID'])
 					except KeyError:
 						prod_user_dict[dt['asin']] = []
-
 	print("Data read")
+	return user_prod_dict, prod_user_dict
 
 def metapath_gen(user):
-	print("Number of users = {}".format(len(user_prod_dict)))
-	print("Numver of products = {}".format(len(prod_user_dict)))
 	outfile = []
 	user0 = user
 	for j in range(numwalks):
@@ -109,7 +107,7 @@ def main():
 	print("Enter 4 to run distance on generated embeddings")
 	task = int(input("Enter : "))
 	if task == 1:
-		read_data(reviews = reviews, ispickle = False, min_rating = 2)	
+		user_prod_dict, prod_user_dict = read_data(reviews = reviews, ispickle = False, min_rating = 2)	
 		print('Saving Dictionaries')
 		with open('metapath2vec/user_prod_dict.pickle', 'wb') as file:
 			pickle.dump(user_prod_dict, file)
@@ -120,9 +118,11 @@ def main():
 			user_prod_dict = pickle.load(file)
 		with open('metapath2vec/prod_user_dict.pickle', 'rb') as file:
 			prod_user_dict = pickle.load(file)
+		print(user_prod_dict)
+		print(prod_user_dict)
 		num_cores = multiprocessing.cpu_count()
 		print('Running on {} cores'.format(num_cores))
-		results = Parallel(n_jobs=num_cores)(delayed(metapath2vec)(i) for i in pbar(user_prod_dict))	
+		results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(i) for i in pbar(user_prod_dict))	
 		print("Saving Metapaths at " + outpath)
 		with open(outpath, 'w') as file:
 			for path in pbar(results):
