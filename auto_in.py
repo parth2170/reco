@@ -169,7 +169,7 @@ def image_to_npy(image_path, prod_cats):
 					if cat not in cat_feat:
 						cat_feat[cat] = []
 					cat_feat[cat].append(ft)
-			if i%200000 :
+			if i%200000 and i > 200000:
 				print("Saving")
 				saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
 				j+=1
