@@ -166,9 +166,9 @@ def image_to_npy(image_path, prod_cats):
 				if cat not in cat_feat:
 					cat_feat[cat] = []
 				cat_feat[cat].append(ft)
-		if i%300000 == 0:
+		if i%180000 == 0:
 			print("Saving")
-			saver(cat_prod, cat_feat, j, all_feat_list, )
+			saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
 			j+=1
 			del cat_feat
 			del cat_prod
