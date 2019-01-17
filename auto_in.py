@@ -144,16 +144,18 @@ def image_to_npy(image_path, prod_cats):
 	i = 1
 	cat_feat = {}
 	cat_prod = {}
-	j = 1
+	j = 0
 	flag = 0
+	dummy = 0
 	print("Reading Images")
 	for image in readImageFeatures(image_path):
 		if i%20000 == 0:
 			print(i)
-			os.system('free -m')
-		if i<=200000:
-			i += 1
-			continue
+			#os.system('free -m')
+
+		if i >= (j+1)*200000:
+			flag = 1
+
 		i += 1
 		im, ft = image
 		im = im.decode("utf-8")
@@ -164,31 +166,32 @@ def image_to_npy(image_path, prod_cats):
 			tcat = map_dict[im]
 			for cat in prod_cats:
 				if cat in tcat:
-					if cat not in cat_prod:
+					try:
+						cat_prod[cat].append(im)
+					except KeyError:
 						cat_prod[cat] = []
-					cat_prod[cat].append(im)
-					if cat not in cat_feat:
+					try:
+						cat_feat[cat].append(ft)
+					except KeyError:
 						cat_feat[cat] = []
-					cat_feat[cat].append(ft)
-			if i > 200000 and flag == 1:
-				print("Saving")
-				saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
-				j+=1
-				del cat_feat
-				del cat_prod
-				del all_feat_list
-				del all_prod_feat_ref_list
-				cat_feat = {}
-				cat_prod = {}
-				all_prod_feat_ref_list = []
-				all_feat_list = []
-				gc.collect()
-				flag = 0
-
 		except KeyError:
-			if i >= (j+1)*200000:
-				flag = 1
-			continue
+			dummy += 1
+
+		if i%200000 == 0:
+			print("Saving")
+			saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
+			j+=1
+			del cat_feat
+			del cat_prod
+			del all_feat_list
+			del all_prod_feat_ref_list
+			cat_feat = {}
+			cat_prod = {}
+			all_prod_feat_ref_list = []
+			all_feat_list = []
+			gc.collect()
+			flag = 0
+
 		del image
 		gc.collect()
 		
