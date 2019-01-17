@@ -162,13 +162,13 @@ def image_to_npy(image_path, prod_cats):
 		try:
 			tcat = map_dict[im]
 			for cat in prod_cats:
-			if cat in tcat:
-				if cat not in cat_prod:
-					cat_prod[cat] = []
-				cat_prod[cat].append(im)
-				if cat not in cat_feat:
-					cat_feat[cat] = []
-				cat_feat[cat].append(ft)
+				if cat in tcat:
+					if cat not in cat_prod:
+						cat_prod[cat] = []
+					cat_prod[cat].append(im)
+					if cat not in cat_feat:
+						cat_feat[cat] = []
+					cat_feat[cat].append(ft)
 			if i%200000 :
 				print("Saving")
 				saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
