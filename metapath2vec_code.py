@@ -2,14 +2,21 @@ import os
 import datetime
 import random
 import pickle
+import json
+from joblib import Parallel, delayed
+import multiprocessing
 from progressbar import ProgressBar 
 pbar = ProgressBar()
 
+user_prod_dict = {}
+prod_user_dict = {}
+numwalks = 100
+walklength = 20
+
 
 def read_data(reviews, ispickle, min_rating):
-	user_prod_dict = {}
-	prod_user_dict = {}
 	print("\nOpening reviews file")
+	i = 0
 	if ispickle:
 		with open(reviews, 'rb') as file:
 			while(True):
@@ -26,45 +33,44 @@ def read_data(reviews, ispickle, min_rating):
 				except EOFError:
 					break
 	else:
-		with open(path, 'r') as file:
+		with open(reviews, 'r') as file:
 			for line in file:
-				if(i%100 == 0):
+				if(i%100000 == 0):
 					print(i)
 				jline = json.loads(line)
 				i+=1
 				dt = dict((k, jline[k]) for k in ('reviewerID', 'asin', 'overall'))
-				if (dt['reviewerID'] not in user_prod_dict) and (dt['overall'] > min_rating):
-					user_prod_dict[dt['reviewerID']] = []
-				if (dt['asin'] not in prod_user_dict) and (dt['overall'] > min_rating):
-					prod_user_dict[dt['asin']] = []
-				if dt['overall'] > min_rating:	#Construct user product link only if overall rating is > min_rating
-					user_prod_dict[dt['reviewerID']].append(dt['asin'])
-					prod_user_dict[dt['asin']].append(dt['reviewerID'])
-	print("Data read")
-	return user_prod_dict, prod_user_dict
+				if dt['overall'] > min_rating:
+					try:
+						user_prod_dict[dt['reviewerID']].append(dt['asin'])
+					except KeyError:
+						user_prod_dict[dt['reviewerID']] = []
+					try:
+						prod_user_dict[dt['asin']].append(dt['reviewerID'])
+					except KeyError:
+						prod_user_dict[dt['asin']] = []
 
-def metapath_gen(user_prod_dict, prod_user_dict, numwalks, walklength, outpath):
+	print("Data read")
+
+def metapath_gen(user):
 	print("Number of users = {}".format(len(user_prod_dict)))
 	print("Numver of products = {}".format(len(prod_user_dict)))
-	outfile = open(outpath, 'w')
-	for user in pbar(user_prod_dict):
-		user0 = user
-		for j in range(numwalks):
-			outline = user0
-			for i in range(walklength):
-				prods = user_prod_dict[user]
-				nump = len(prods)
-				prodid = random.randrange(nump)
-				prod = prods[prodid]
-				outline = " "+prod
-				users = prod_user_dict[prod]
-				numu = len(users)
-				userid = random.randrange(numu)
-				user = users[userid]
-				outline = " "+user
-			outfile.write(outline + "\n")
-	outfile.close()
-	print("Metapaths saved at " + outpath)
+	outfile = []
+	user0 = user
+	for j in range(numwalks):
+		outline = user0
+		for i in range(walklength):
+			prods = user_prod_dict[user]
+			nump = len(prods)
+			prodid = random.randrange(nump)
+			prod = prods[prodid]
+			outline = " "+prod
+			users = prod_user_dict[prod]
+			numu = len(users)
+			userid = random.randrange(numu)
+			user = users[userid]
+			outline = " "+user
+		outfile.append(str(outline + "\n"))
 
 def metapath2vec(code_dir, metapaths, embout):
 	print("Running Metapath2Vec")
@@ -85,25 +91,45 @@ def distance(code_dir, embout):
 	os.system(cmd)
 
 def main():
-	reviews = "saved/reviews_sample"
+
+	user_prod_dict = {}
+	prod_user_dict = {}
+	numwalks = 100
+	walklength = 20
+
+	reviews = "data/reviews.json"
 	outpath = "metapath2vec/metapaths.txt"
 	embout = "metapath2vec/metapath2vec_embeddings.txt"
 	metapath2vec_dir = "/Users/deepthought/code/docsim/code_metapath2vec"
 
 	print("Please specify all the parameters and paths in the script itself")
 	print("Enter 1 to read data and generate metapaths")
-	print("Enter 2 to run metapath2vec on generated metapaths")
-	print("Enter 3 to run distance on generated embeddings")
-	print("Enter 4 to do all")
+	print("Enter 2 to generate metapaths")
+	print("Enter 3 to run metapath2vec on generated metapaths")
+	print("Enter 4 to run distance on generated embeddings")
 	task = int(input("Enter : "))
-	if task == 1 or task == 4:
-		numwalks = 200
-		walklength = 30
-		user_prod_dict, prod_user_dict = read_data(reviews = reviews, ispickle = True, min_rating = 2)		
-		metapath_gen(user_prod_dict = user_prod_dict, prod_user_dict = prod_user_dict, numwalks = numwalks, walklength =  walklength, outpath = outpath)
-	if task == 2 or task == 4:
+	if task == 1:
+		read_data(reviews = reviews, ispickle = False, min_rating = 2)	
+		print('Saving Dictionaries')
+		with open('metapath2vec/user_prod_dict.pickle', 'wb') as file:
+			pickle.dump(user_prod_dict, file)
+		with open('metapath2vec/prod_user_dict.pickle', 'wb') as file:
+			pickle.dump(prod_user_dict, file)
+	if task == 2:
+		with open('metapath2vec/user_prod_dict.pickle', 'rb') as file:
+			user_prod_dict = pickle.load(file)
+		with open('metapath2vec/prod_user_dict.pickle', 'rb') as file:
+			prod_user_dict = pickle.load(file)
+		num_cores = multiprocessing.cpu_count()
+		print('Running on {} cores'.format(num_cores))
+		results = Parallel(n_jobs=num_cores)(delayed(metapath2vec)(i) for i in pbar(user_prod_dict))	
+		print("Saving Metapaths at " + outpath)
+		with open(outpath, 'w') as file:
+			for path in pbar(results):
+				file.write(path)
+	if task == 3:
 		metapath2vec(code_dir = metapath2vec_dir, outpath = outpath, embout = embout)
-	if task == 3 or task == 4:
+	if task == 4:
 		distance(code_dir, embout)
 	else:
 		print("Invalid Choice")
