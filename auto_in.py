@@ -151,7 +151,7 @@ def image_to_npy(image_path, prod_cats):
 	for image in readImageFeatures(image_path):
 		if i%20000 == 0:
 			print(i)
-			#os.system('free -m')
+			os.system('free -m')
 
 		if i >= (j+1)*200000:
 			flag = 1
@@ -166,14 +166,12 @@ def image_to_npy(image_path, prod_cats):
 			tcat = map_dict[im]
 			for cat in prod_cats:
 				if cat in tcat:
-					try:
-						cat_prod[cat].append(im)
-					except KeyError:
+					if cat not in cat_prod:
 						cat_prod[cat] = []
-					try:
-						cat_feat[cat].append(ft)
-					except KeyError:
 						cat_feat[cat] = []
+					cat_prod[cat].append(im)
+					cat_feat[cat].append(ft)
+
 		except KeyError:
 			dummy += 1
 
