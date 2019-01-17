@@ -145,6 +145,7 @@ def image_to_npy(image_path, prod_cats):
 	cat_feat = {}
 	cat_prod = {}
 	j = 1
+	flag = 0
 	print("Reading Images")
 	for image in readImageFeatures(image_path):
 		if i%20000 == 0:
@@ -169,7 +170,7 @@ def image_to_npy(image_path, prod_cats):
 					if cat not in cat_feat:
 						cat_feat[cat] = []
 					cat_feat[cat].append(ft)
-			if i%200000 == 0 and i > 200000:
+			if i > 200000 and flag == 1:
 				print("Saving")
 				saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
 				j+=1
@@ -182,9 +183,14 @@ def image_to_npy(image_path, prod_cats):
 				all_prod_feat_ref_list = []
 				all_feat_list = []
 				gc.collect()
+				flag = 0
 
 		except KeyError:
+			if i >= (j+1)*200000:
+				flag = 1
 			continue
+		del image
+		gc.collect()
 		
 
 
