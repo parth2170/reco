@@ -143,11 +143,13 @@ def image_to_npy(image_path, prod_cats):
 	i = 1
 	cat_feat = {}
 	cat_prod = {}
-	j = 0
+	j = 1
 	print("Reading Images")
 	for image in readImageFeatures(image_path):
 		if i%20000 == 0:
 			print(i)
+		if i<=20000:
+			continue
 		i += 1
 		im, ft = image
 		im = im.decode("utf-8")
@@ -166,7 +168,7 @@ def image_to_npy(image_path, prod_cats):
 				if cat not in cat_feat:
 					cat_feat[cat] = []
 				cat_feat[cat].append(ft)
-		if i%180000 == 0:
+		if i%200000 == 0:
 			print("Saving")
 			saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
 			j+=1
