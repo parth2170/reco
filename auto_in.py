@@ -4,6 +4,7 @@ import ast
 import array
 import pickle
 import gc
+import os
 
 map_dict = {}
 
@@ -148,7 +149,9 @@ def image_to_npy(image_path, prod_cats):
 	for image in readImageFeatures(image_path):
 		if i%20000 == 0:
 			print(i)
+			os.system('free -m')
 		if i<=200000:
+			i += 1
 			continue
 		i += 1
 		im, ft = image
@@ -158,9 +161,7 @@ def image_to_npy(image_path, prod_cats):
 		tcat = None
 		try:
 			tcat = map_dict[im]
-		except KeyError:
-			continue
-		for cat in prod_cats:
+			for cat in prod_cats:
 			if cat in tcat:
 				if cat not in cat_prod:
 					cat_prod[cat] = []
@@ -168,20 +169,23 @@ def image_to_npy(image_path, prod_cats):
 				if cat not in cat_feat:
 					cat_feat[cat] = []
 				cat_feat[cat].append(ft)
-		if i%200000 == 0:
-			print("Saving")
-			saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
-			j+=1
-			del cat_feat
-			del cat_prod
-			del all_feat_list
-			del all_prod_feat_ref_list
-			cat_feat = {}
-			cat_prod = {}
-			all_prod_feat_ref_list = []
-			all_feat_list = []
-			gc.collect()
+			if i%200000 :
+				print("Saving")
+				saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
+				j+=1
+				del cat_feat
+				del cat_prod
+				del all_feat_list
+				del all_prod_feat_ref_list
+				cat_feat = {}
+				cat_prod = {}
+				all_prod_feat_ref_list = []
+				all_feat_list = []
+				gc.collect()
 
+		except KeyError:
+			continue
+		
 
 
 if __name__ == '__main__':
