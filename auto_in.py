@@ -148,7 +148,7 @@ def image_to_npy(image_path, prod_cats):
 	for image in readImageFeatures(image_path):
 		if i%20000 == 0:
 			print(i)
-		if i<=20000:
+		if i<=200000:
 			continue
 		i += 1
 		im, ft = image
