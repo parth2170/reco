@@ -23,9 +23,9 @@ def read_data(reviews, ispickle, min_rating):
 				try:
 					jline = pickle.load(file)
 					dt = dict((k, jline[k]) for k in ('reviewerID', 'asin', 'overall'))
-					if (dt['reviewerID'] not in user_prod_dict) and (dt['overall'] > min_rating):
+					if (dt['reviewerID'] not in user_prod_dict) and (dt['overall'] >= min_rating):
 						user_prod_dict[dt['reviewerID']] = []
-					if (dt['asin'] not in prod_user_dict) and (dt['overall'] > min_rating):
+					if (dt['asin'] not in prod_user_dict) and (dt['overall'] >= min_rating):
 						prod_user_dict[dt['asin']] = []
 					if dt['overall'] > min_rating:	#Construct user product link only if overall rating is > min_rating
 						user_prod_dict[dt['reviewerID']].append(dt['asin'])
@@ -39,6 +39,7 @@ def read_data(reviews, ispickle, min_rating):
 					print(i)					
 				jline = json.loads(line)
 				i+=1
+
 				dt = dict((k, jline[k]) for k in ('reviewerID', 'asin', 'overall'))
 				if dt['overall'] > min_rating:
 					try:
@@ -58,17 +59,25 @@ def metapath_gen(user):
 	for j in range(numwalks):
 		outline = user0
 		for i in range(walklength):
-			prods = user_prod_dict[user]
+			try:
+				prods = user_prod_dict[user]
+			except KeyError:
+				continue
 			nump = len(prods)
 			prodid = random.randrange(nump)
 			prod = prods[prodid]
 			outline = " "+prod
-			users = prod_user_dict[prod]
+			try:
+				users = prod_user_dict[prod]
+			except KeyError:
+				continue
 			numu = len(users)
 			userid = random.randrange(numu)
 			user = users[userid]
 			outline = " "+user
 		outfile.append(str(outline + "\n"))
+	return outfile
+
 
 def metapath2vec(code_dir, metapaths, embout):
 	print("Running Metapath2Vec")
@@ -107,7 +116,7 @@ def main():
 	print("Enter 4 to run distance on generated embeddings")
 	task = int(input("Enter : "))
 	if task == 1:
-		user_prod_dict, prod_user_dict = read_data(reviews = reviews, ispickle = False, min_rating = 2)	
+		user_prod_dict, prod_user_dict = read_data(reviews = reviews, ispickle = False, min_rating = 1)	
 		print('Saving Dictionaries')
 		with open('metapath2vec/user_prod_dict.pickle', 'wb') as file:
 			pickle.dump(user_prod_dict, file)
@@ -118,15 +127,16 @@ def main():
 			user_prod_dict = pickle.load(file)
 		with open('metapath2vec/prod_user_dict.pickle', 'rb') as file:
 			prod_user_dict = pickle.load(file)
-		print(user_prod_dict)
-		print(prod_user_dict)
+		#print(user_prod_dict)
+		#print(prod_user_dict)
 		num_cores = multiprocessing.cpu_count()
 		print('Running on {} cores'.format(num_cores))
 		results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(i) for i in pbar(user_prod_dict))	
 		print("Saving Metapaths at " + outpath)
 		with open(outpath, 'w') as file:
-			for path in pbar(results):
-				file.write(path)
+			for paths in pbar(results):
+				for path in paths:
+					file.write(path)
 	if task == 3:
 		metapath2vec(code_dir = metapath2vec_dir, outpath = outpath, embout = embout)
 	if task == 4:
