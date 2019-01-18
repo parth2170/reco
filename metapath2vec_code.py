@@ -5,16 +5,19 @@ import pickle
 import json
 from joblib import Parallel, delayed
 import multiprocessing
-from progressbar import ProgressBar 
-pbar = ProgressBar()
+import progressbar
+from tqdm import tqdm
 
-user_prod_dict = {}
-prod_user_dict = {}
+
 numwalks = 100
 walklength = 20
 
 
 def read_data(reviews, ispickle, min_rating):
+
+	user_prod_dict = {}
+	prod_user_dict = {}
+	bar = progressbar.ProgressBar(max_value=progressbar.UnknownLength)
 	print("\nOpening reviews file")
 	i = 0
 	if ispickle:
@@ -35,11 +38,9 @@ def read_data(reviews, ispickle, min_rating):
 	else:
 		with open(reviews, 'r') as file:
 			for line in file:
-				if(i%100000 == 0):
-					print(i)					
+				bar.update(i)
 				jline = json.loads(line)
 				i+=1
-
 				dt = dict((k, jline[k]) for k in ('reviewerID', 'asin', 'overall'))
 				if dt['overall'] > min_rating:
 					try:
@@ -50,10 +51,10 @@ def read_data(reviews, ispickle, min_rating):
 						prod_user_dict[dt['asin']].append(dt['reviewerID'])
 					except KeyError:
 						prod_user_dict[dt['asin']] = []
-	print("Data read")
+	print("\nData read")
 	return user_prod_dict, prod_user_dict
 
-def metapath_gen(user):
+def metapath_gen(user, user_prod_dict, prod_user_dict):
 	outfile = []
 	user0 = user
 	for j in range(numwalks):
@@ -64,6 +65,8 @@ def metapath_gen(user):
 			except KeyError:
 				continue
 			nump = len(prods)
+			if nump == 0:
+				continue
 			prodid = random.randrange(nump)
 			prod = prods[prodid]
 			outline = " "+prod
@@ -72,6 +75,8 @@ def metapath_gen(user):
 			except KeyError:
 				continue
 			numu = len(users)
+			if numu == 0:
+				continue
 			userid = random.randrange(numu)
 			user = users[userid]
 			outline = " "+user
@@ -99,8 +104,6 @@ def distance(code_dir, embout):
 
 def main():
 
-	user_prod_dict = {}
-	prod_user_dict = {}
 	numwalks = 100
 	walklength = 20
 
@@ -131,10 +134,10 @@ def main():
 		#print(prod_user_dict)
 		num_cores = multiprocessing.cpu_count()
 		print('Running on {} cores'.format(num_cores))
-		results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(i) for i in pbar(user_prod_dict))	
+		results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(user = i, user_prod_dict = user_prod_dict, prod_user_dict = prod_user_dict) for i in tqdm(user_prod_dict))	
 		print("Saving Metapaths at " + outpath)
 		with open(outpath, 'w') as file:
-			for paths in pbar(results):
+			for paths in tqdm(results):
 				for path in paths:
 					file.write(path)
 	if task == 3:
