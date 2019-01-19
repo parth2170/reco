@@ -12,6 +12,10 @@ from tqdm import tqdm
 numwalks = 100
 walklength = 20
 
+with open('metapath2vec/user_prod_dict.pickle', 'rb') as file:
+	user_prod_dict = pickle.load(file)
+with open('metapath2vec/prod_user_dict.pickle', 'rb') as file:
+	prod_user_dict = pickle.load(file)
 
 def read_data(reviews, ispickle, min_rating):
 
@@ -47,14 +51,16 @@ def read_data(reviews, ispickle, min_rating):
 						user_prod_dict[dt['reviewerID']].append(dt['asin'])
 					except KeyError:
 						user_prod_dict[dt['reviewerID']] = []
+						user_prod_dict[dt['reviewerID']].append(dt['asin'])
 					try:
 						prod_user_dict[dt['asin']].append(dt['reviewerID'])
 					except KeyError:
 						prod_user_dict[dt['asin']] = []
+						prod_user_dict[dt['asin']].append(dt['reviewerID'])
 	print("\nData read")
 	return user_prod_dict, prod_user_dict
 
-def metapath_gen(user, user_prod_dict, prod_user_dict):
+def metapath_gen(user):
 	outfile = []
 	user0 = user
 	for j in range(numwalks):
@@ -106,7 +112,8 @@ def main():
 
 	numwalks = 100
 	walklength = 20
-
+	global user_prod_dict
+	global prod_user_dict
 	reviews = "data/reviews.json"
 	outpath = "metapath2vec/metapaths.txt"
 	embout = "metapath2vec/metapath2vec_embeddings.txt"
@@ -126,15 +133,12 @@ def main():
 		with open('metapath2vec/prod_user_dict.pickle', 'wb') as file:
 			pickle.dump(prod_user_dict, file)
 	if task == 2:
-		with open('metapath2vec/user_prod_dict.pickle', 'rb') as file:
-			user_prod_dict = pickle.load(file)
-		with open('metapath2vec/prod_user_dict.pickle', 'rb') as file:
-			prod_user_dict = pickle.load(file)
-		#print(user_prod_dict)
-		#print(prod_user_dict)
 		num_cores = multiprocessing.cpu_count()
-		print('Running on {} cores'.format(num_cores))
-		results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(user = i, user_prod_dict = user_prod_dict, prod_user_dict = prod_user_dict) for i in tqdm(user_prod_dict))	
+		#print('Running on {} cores'.format(num_cores))
+		#results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(user = i) for i in tqdm(user_prod_dict))	
+		results = []
+		for user in tqdm(user_prod_dict):
+			results.append(metapath_gen(user))
 		print("Saving Metapaths at " + outpath)
 		with open(outpath, 'w') as file:
 			for paths in tqdm(results):
