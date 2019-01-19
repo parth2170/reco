@@ -140,6 +140,7 @@ def saver(cat_prod, cat_feat, n, all_feat_list, all_prod_feat_ref_list):
 
 
 def image_to_npy(image_path, prod_cats):
+	prod_cats = set(list(prod_cats.keys()))
 	all_prod_feat_ref_list = []
 	all_feat_list = []
 	i = 1
@@ -152,6 +153,7 @@ def image_to_npy(image_path, prod_cats):
 	bar = progressbar.ProgressBar(max_value=progressbar.UnknownLength)
 	for image in readImageFeatures(image_path):
 		bar.update(i)
+
 		if i%50000 == 0:
 			os.system('free -m')
 
@@ -162,12 +164,14 @@ def image_to_npy(image_path, prod_cats):
 		all_feat_list.append(ft)
 		tcat = None
 		try:
-			tcat = map_dict[im]
-			for cat in prod_cats:
-				if cat in tcat:
-					if cat not in cat_prod:
-						cat_prod[cat] = []
-						cat_feat[cat] = []
+			tcat = set(map_dict[im])
+			for cat in list(prod_cats.union(tcat)):
+				try:
+					cat_prod[cat].append(im)
+					cat_feat[cat].append(ft)
+				except KeyError:
+					cat_prod[cat] = []
+					cat_feat[cat] = []
 					cat_prod[cat].append(im)
 					cat_feat[cat].append(ft)
 
@@ -190,7 +194,7 @@ def image_to_npy(image_path, prod_cats):
 			flag = 0
 
 		del image
-		gc.collect()
+		#gc.collect()
 		
 
 
