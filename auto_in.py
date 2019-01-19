@@ -5,6 +5,7 @@ import array
 import pickle
 import gc
 import os
+import progressbar
 
 map_dict = {}
 
@@ -148,13 +149,11 @@ def image_to_npy(image_path, prod_cats):
 	flag = 0
 	dummy = 0
 	print("Reading Images")
+	bar = progressbar.ProgressBar(max_value=progressbar.UnknownLength)
 	for image in readImageFeatures(image_path):
-		if i%20000 == 0:
-			print(i)
+		bar.update(i)
+		if i%50000 == 0:
 			os.system('free -m')
-
-		if i >= (j+1)*200000:
-			flag = 1
 
 		i += 1
 		im, ft = image
