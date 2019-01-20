@@ -76,28 +76,28 @@ def autoencode(path,features_path,encoding_dim=300,img_dim=4096,optimizer='adade
   x_train = norm_data[:int(data_size*train_size)]
   x_test = norm_data[int(data_size*train_size):]
 
-  autoencoder.fit(x_train, x_train, epochs=my_epochs, batch_size=256, shuffle=True, validation_data=(x_test, x_test),
+  history = autoencoder.fit(x_train, x_train, epochs=my_epochs, batch_size=256, shuffle=True, validation_data=(x_test, x_test),
                   verbose=2)
 
   encoded_imgs = encoder.predict(norm_data)
   decoded_imgs = decoder.predict(encoded_imgs)
-  '''
-  plt.plot(autoencoder.history['acc'])
-  plt.plot(autoencoder.history['val_acc'])
+  
+  plt.plot(history.history['acc'])
+  plt.plot(history.history['val_acc'])
   plt.title('model accuracy')
   plt.ylabel('accuracy')
   plt.xlabel('epoch')
   plt.legend(['train', 'test'], loc='upper left')
   plt.savefig(features_path[:-7]+"acc.png")
   # summarize history for loss
-  plt.plot(autoencoder.history['loss'])
-  plt.plot(autoencoder.history['val_loss'])
+  plt.plot(history.history['loss'])
+  plt.plot(history.history['val_loss'])
   plt.title('model loss')
   plt.ylabel('loss')
   plt.xlabel('epoch')
   plt.legend(['train', 'test'], loc='upper left')
   plt.savefig(features_path[:-7]+".png")
-  '''
+  
   pickle.dump(encoded_imgs, open(features_path, 'wb'))
 
 # prepare input data

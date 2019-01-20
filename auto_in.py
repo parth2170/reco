@@ -69,10 +69,10 @@ def relation(meta_data_path, prod_cats):
 	bav = open('saved/buy_after_viewing.txt', 'w')
 	print("Creating Text files")
 	count = 1
+	bar = progressbar.ProgressBar(max_value=progressbar.UnknownLength)
 	with open(meta_data_path, 'r') as file:
 		for line in file:
-			if count%20000 == 0:
-				print(count)
+			bar.update(count)
 			count += 1
 			jline = ast.literal_eval(line)
 			dt = None
@@ -89,8 +89,9 @@ def relation(meta_data_path, prod_cats):
 				temp = []
 				for t in rel_p:
 					try:
-						if map_dict[t] in tcat:
-							temp.append(t)
+						for j in map_dict[t]:
+							if j in tcat:
+								temp.append(t)
 					except KeyError:
 						continue
 				rel_p = temp
@@ -155,10 +156,6 @@ def image_to_npy(image_path, prod_cats):
 
 		for image in readImageFeatures(image_path):
 			bar.update(i)
-
-			if i <= 1450000:
-				i += 1
-				continue
 			i += 1
 			im, ft = image
 			im = im.decode("utf-8")
@@ -167,7 +164,7 @@ def image_to_npy(image_path, prod_cats):
 			tcat = None
 			try:
 				tcat = set(map_dict[im])
-				for cat in list(prod_cats.union(tcat)):
+				for cat in list(prod_cats.intersection(tcat)):
 					try:
 						cat_prod[cat].append(im)
 						cat_feat[cat].append(ft)
@@ -200,6 +197,7 @@ def image_to_npy(image_path, prod_cats):
 	except EOFError:
 		print("Saving")
 		saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
+		j += 1
 		del cat_feat
 		del cat_prod
 		del all_feat_list
