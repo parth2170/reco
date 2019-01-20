@@ -81,7 +81,7 @@ def autoencode(path,features_path,encoding_dim=300,img_dim=4096,optimizer='adade
 
   encoded_imgs = encoder.predict(norm_data)
   decoded_imgs = decoder.predict(encoded_imgs)
-
+  '''
   plt.plot(autoencoder.history['acc'])
   plt.plot(autoencoder.history['val_acc'])
   plt.title('model accuracy')
@@ -97,7 +97,7 @@ def autoencode(path,features_path,encoding_dim=300,img_dim=4096,optimizer='adade
   plt.xlabel('epoch')
   plt.legend(['train', 'test'], loc='upper left')
   plt.savefig(features_path[:-7]+".png")
-
+  '''
   pickle.dump(encoded_imgs, open(features_path, 'wb'))
 
 # prepare input data
