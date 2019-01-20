@@ -7,6 +7,8 @@ import matplotlib
 import numpy as np
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
+import re
+
 res = open("data/results.txt","w")
 parser = OptionParser()
 parser.add_option("--img_data", dest="img_data")

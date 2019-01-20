@@ -70,4 +70,4 @@ ADIR = data/
 	$(ADIR)/duplicate_list.txt.gz \
 	$(ADIR)/image_features_$*.b \
 	5 \
-	$(ADIR)/also_viewed_$*.txt.gz
+	$(ADIR)/also_viewed.txt.gz
