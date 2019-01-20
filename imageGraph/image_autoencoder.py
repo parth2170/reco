@@ -82,6 +82,7 @@ def autoencode(path,features_path,encoding_dim=300,img_dim=4096,optimizer='adade
   encoded_imgs = encoder.predict(norm_data)
   decoded_imgs = decoder.predict(encoded_imgs)
   
+  '''
   # summarize history for loss
   plt.plot(history.history['loss'])
   plt.plot(history.history['val_loss'])
@@ -90,7 +91,7 @@ def autoencode(path,features_path,encoding_dim=300,img_dim=4096,optimizer='adade
   plt.xlabel('epoch')
   plt.legend(['train', 'test'], loc='upper left')
   plt.savefig(features_path[:-7]+".png")
-  
+  '''
   pickle.dump(encoded_imgs, open(features_path, 'wb'))
 
 # prepare input data
