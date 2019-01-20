@@ -19,6 +19,8 @@ parser.add_option("--plot_file",dest="plot_file_name",default = "acc.png")
 print (options.index_data)
 ain = np.load(options.index_data)
 
+head, tail = os.path.split(options.img_data)
+
 if (bool(options.eval_for_original)):
     ain = ain.tolist()
     head, tail = os.path.split(options.img_data)
@@ -33,7 +35,7 @@ if (bool(options.eval_for_original)):
     cmd  = "make "+"total"+".out"
     ret = os.system(cmd)
     res.write(str(ret))
-autoencode(options.img_data,options.img_data[:-7]+str(options.encoding_dim)+".pickle",int(options.encoding_dim),4096,options.optimizer,loss='binary_crossentropy',my_epochs=50)
+autoencode(options.img_data,options.img_data[:-7]+str(options.encoding_dim)+".pickle",int(options.encoding_dim),4096,options.optimizer,loss='binary_crossentropy',my_epochs=10)
 deep_features_pth = options.img_data[:-7]+str(options.encoding_dim)+".pickle"
 
 f = open(deep_features_pth,"rb")

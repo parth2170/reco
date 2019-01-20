@@ -146,55 +146,72 @@ def image_to_npy(image_path, prod_cats):
 	i = 1
 	cat_feat = {}
 	cat_prod = {}
-	j = 0
+	j = -1
 	flag = 0
 	dummy = 0
 	print("Reading Images")
 	bar = progressbar.ProgressBar(max_value=progressbar.UnknownLength)
-	for image in readImageFeatures(image_path):
-		bar.update(i)
+	try:
 
-		if i%50000 == 0:
-			os.system('free -m')
+		for image in readImageFeatures(image_path):
+			bar.update(i)
 
-		i += 1
-		im, ft = image
-		im = im.decode("utf-8")
-		all_prod_feat_ref_list.append(im)
-		all_feat_list.append(ft)
-		tcat = None
-		try:
-			tcat = set(map_dict[im])
-			for cat in list(prod_cats.union(tcat)):
-				try:
-					cat_prod[cat].append(im)
-					cat_feat[cat].append(ft)
-				except KeyError:
-					cat_prod[cat] = []
-					cat_feat[cat] = []
-					cat_prod[cat].append(im)
-					cat_feat[cat].append(ft)
+			if i <= 1450000:
+				i += 1
+				continue
+			i += 1
+			im, ft = image
+			im = im.decode("utf-8")
+			all_prod_feat_ref_list.append(im)
+			all_feat_list.append(ft)
+			tcat = None
+			try:
+				tcat = set(map_dict[im])
+				for cat in list(prod_cats.union(tcat)):
+					try:
+						cat_prod[cat].append(im)
+						cat_feat[cat].append(ft)
+					except KeyError:
+						cat_prod[cat] = []
+						cat_feat[cat] = []
+						cat_prod[cat].append(im)
+						cat_feat[cat].append(ft)
 
-		except KeyError:
-			dummy += 1
+			except KeyError:
+				dummy += 1
 
-		if i%200000 == 0:
-			print("Saving")
-			saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
-			j+=1
-			del cat_feat
-			del cat_prod
-			del all_feat_list
-			del all_prod_feat_ref_list
-			cat_feat = {}
-			cat_prod = {}
-			all_prod_feat_ref_list = []
-			all_feat_list = []
-			gc.collect()
-			flag = 0
+			if i%50000 == 0:
+				print("Saving")
+				saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
+				j+=1
+				del cat_feat
+				del cat_prod
+				del all_feat_list
+				del all_prod_feat_ref_list
+				cat_feat = {}
+				cat_prod = {}
+				all_prod_feat_ref_list = []
+				all_feat_list = []
+				gc.collect()
+				flag = 0
 
-		del image
-		#gc.collect()
+			del image
+			#gc.collect()
+	except EOFError:
+		print("Saving")
+		saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
+		del cat_feat
+		del cat_prod
+		del all_feat_list
+		del all_prod_feat_ref_list
+		cat_feat = {}
+		cat_prod = {}
+		all_prod_feat_ref_list = []
+		all_feat_list = []
+		gc.collect()
+		
+		print("File read")
+
 		
 
 

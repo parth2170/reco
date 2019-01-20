@@ -25,7 +25,7 @@ def rev_norm(y, ind):
 #path = "/content/drive/My Drive/reco/feat_list.npy"
 #features_path = '/content/drive/My Drive/reco/deep_autoe_features.pickle'
 
-def autoencode(path,features_path,encoding_dim=300,img_dim=4096,optimizer='adadelta',loss='binary_crossentropy',my_epochs=50):
+def autoencode(path,features_path,encoding_dim=300,img_dim=4096,optimizer='adadelta',loss='binary_crossentropy',my_epochs=10):
   data = np.load(path)
   data_size = len(data)
   train_size = 0.8
@@ -81,16 +81,17 @@ def autoencode(path,features_path,encoding_dim=300,img_dim=4096,optimizer='adade
 
   encoded_imgs = encoder.predict(norm_data)
   decoded_imgs = decoder.predict(encoded_imgs)
-  plt.plot(history.history['acc'])
-  plt.plot(history.history['val_acc'])
+
+  plt.plot(autoencoder.history['acc'])
+  plt.plot(autoencoder.history['val_acc'])
   plt.title('model accuracy')
   plt.ylabel('accuracy')
   plt.xlabel('epoch')
   plt.legend(['train', 'test'], loc='upper left')
   plt.savefig(features_path[:-7]+"acc.png")
   # summarize history for loss
-  plt.plot(history.history['loss'])
-  plt.plot(history.history['val_loss'])
+  plt.plot(autoencoder.history['loss'])
+  plt.plot(autoencoder.history['val_loss'])
   plt.title('model loss')
   plt.ylabel('loss')
   plt.xlabel('epoch')
