@@ -92,6 +92,7 @@ def relation(meta_data_path, prod_cats):
 						for j in map_dict[t]:
 							if j in tcat:
 								temp.append(t)
+								break
 					except KeyError:
 						continue
 				rel_p = temp
@@ -221,8 +222,8 @@ if __name__ == '__main__':
 	for i in pc:
 		print('{}  {}'.format(i, len(pc[i])))
 	map(pc)
-	#relation('data/meta.json', pc)
-	image_to_npy('data/image_features', pc)
+	relation('data/meta.json', pc)
+	#image_to_npy('data/image_features', pc)
 
 
 
