@@ -43,7 +43,6 @@ void experiment(corpus* corp, // Data
     train = ec.error(TRAIN);
     valid = ec.error(VALID);
     test = ec.error(TEST);
-    ec.saveModel('Y.txt');
 
     char* mp = new char [10000];
     // Use this code if you want to save the model somewhere
@@ -105,7 +104,7 @@ int main(int argc, char** argv)
               1000,
               0); // max number of reviews to read (0 for all)
 
-  experiment(&corp, lambda, 500, 0, 0, K);
+  experiment(&corp, lambda, 500, "Y.txt", 0, K);
 
   printf("}\n");
   return 0;
