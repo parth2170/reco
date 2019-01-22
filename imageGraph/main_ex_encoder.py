@@ -28,19 +28,19 @@ if (bool(options.eval_for_original)):
     head, tail = os.path.split(options.img_data)
     feat = np.load(options.img_data)
     print ("Loaded")
-    f = open("data/image_features_"+"total"+".b","wb")
+    f = open("data/image_features_"+tail[:-4]+".b","wb")
     for index,key in enumerate(ain) :
         f.write(key.encode())
         for i in feat[index]:
             f.write(bytearray(struct.pack("f", i)))
     f.close()
-    cmd  = "make "+"total"+".out"
+    cmd  = "make "+tail[:-4]+".out"
     ret = os.system(cmd)
     res.write(str(ret))
 
     print (ret)
     res.close()
-    
+
 '''
 autoencode(options.img_data,options.img_data[:-7]+str(options.encoding_dim)+".pickle",int(options.encoding_dim),4096,options.optimizer,loss='binary_crossentropy',my_epochs=10)
 deep_features_pth = options.img_data[:-7]+str(options.encoding_dim)+".pickle"
