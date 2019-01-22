@@ -76,7 +76,7 @@ corpus::corpus(string voteFile, char** graphPaths, char* categoryPath, char* dup
   nUsers = 0;
   nWords = 0;
 
-  imFeatureDim = 300;
+  imFeatureDim = 4096;
 
   int a;
   fprintf(stderr, "Loading image features from %s", featurePath);

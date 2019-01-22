@@ -43,6 +43,7 @@ void experiment(corpus* corp, // Data
     train = ec.error(TRAIN);
     valid = ec.error(VALID);
     test = ec.error(TEST);
+    ec.saveModel('Y.txt')
 
     char* mp = new char [10000];
     // Use this code if you want to save the model somewhere

@@ -15,7 +15,7 @@ parser.add_option("--img_data", dest="img_data")
 parser.add_option("--index_data", dest="index_data")
 parser.add_option("--encoding_dim", dest="encoding_dim",default = 300)
 parser.add_option("--optimizer", dest="optimizer",default = "adadelta")
-parser.add_option("--eval_for_original", dest="eval_for_original",default = False)
+parser.add_option("--eval_for_original", dest="eval_for_original",default = True)
 parser.add_option("--plot_file",dest="plot_file_name",default = "acc.png")
 (options, args) = parser.parse_args()
 print (options.index_data)
@@ -37,6 +37,11 @@ if (bool(options.eval_for_original)):
     cmd  = "make "+"total"+".out"
     ret = os.system(cmd)
     res.write(str(ret))
+
+    print (ret)
+    res.close()
+    
+'''
 autoencode(options.img_data,options.img_data[:-7]+str(options.encoding_dim)+".pickle",int(options.encoding_dim),4096,options.optimizer,loss='binary_crossentropy',my_epochs=10)
 deep_features_pth = options.img_data[:-7]+str(options.encoding_dim)+".pickle"
 
@@ -52,5 +57,4 @@ f.close()
 cmd  = "make "+tail[:-4]+".out"
 ret = os.system(cmd)
 res.write(str(ret))
-print (ret)
-res.close()
+'''
