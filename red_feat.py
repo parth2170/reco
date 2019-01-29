@@ -107,11 +107,12 @@ if __name__ == '__main__':
 	all_feat = []
 	for cat in master_cats:
 		try:
-			print(cat)
-			combine_files(cat = cat)
-			#run_paper(cat = cat)
-			#feat = reduce('imageGraph/Y.txt-also_viewed-100-0.000000.txt', 'saved/{}'.format(cat))
-			#all_feat.extend(feat)
+			if not cat == 'Jewelry':
+				print(cat)
+				combine_files(cat = cat)
+				#run_paper(cat = cat)
+				#feat = reduce('imageGraph/Y.txt-also_viewed-100-0.000000.txt', 'saved/{}'.format(cat))
+				#all_feat.extend(feat)
 
 		except FileNotFoundError as error:
 			print(error)
