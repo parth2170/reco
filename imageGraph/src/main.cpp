@@ -104,7 +104,8 @@ int main(int argc, char** argv)
               1000,
               0); // max number of reviews to read (0 for all)
 
-  experiment(&corp, lambda, 500, "Y.txt", 0, K);
+ char* mp = "Y.txt";
+  experiment(&corp, lambda, 500, mp, 0, K);
 
   printf("}\n");
   return 0;

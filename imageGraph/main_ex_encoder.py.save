@@ -28,13 +28,13 @@ if (bool(options.eval_for_original)):
     head, tail = os.path.split(options.img_data)
     feat = np.load(options.img_data)
     print ("Loaded")
-    if(os.path.isfile("data/image_features_"+tail[:-4]+".b")==False):
-        f = open("data/image_features_"+tail[:-4]+".b","wb")
-        for index,key in enumerate(ain) :
-            f.write(key.encode())
-            for i in feat[index]:
-                f.write(bytearray(struct.pack("f", i)))
-        f.close()
+    if (os.path.isfile(import os.path
+    f = open("data/image_features_"+tail[:-4]+".b","wb")
+    for index,key in enumerate(ain) :
+        f.write(key.encode())
+        for i in feat[index]:
+            f.write(bytearray(struct.pack("f", i)))
+    f.close()
     cmd  = "make "+tail[:-4]+".out"
     ret = os.system(cmd)
     res.write(str(ret))

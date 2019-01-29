@@ -69,5 +69,5 @@ ADIR = data/
 	$(ADIR)/productMeta.txt.gz \
 	$(ADIR)/duplicate_list.txt.gz \
 	$(ADIR)/image_features_$*.b \
-	5 \
+	100 \
 	$(ADIR)/also_viewed.txt.gz
