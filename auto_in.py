@@ -12,7 +12,7 @@ map_dict = {}
 def read_meta(meta_data_path):
 	unrelated = []
 	prod_cats = {}
-	master_cats = ['Baby', 'Boots', 'Boys', 'Girls', 'Jwelery', 'Men', 'Novelty', 'Costumes', 'Shoes', 'Accessories', 'Women']
+	master_cats = ['Baby', 'Boots', 'Boys', 'Girls', 'Jewelry', 'Men', 'Novelty', 'Costumes', 'Shoes', 'Accessories', 'Women']
 	print("Reading Meta Data")
 	with open(meta_data_path, 'r') as file:
 		count = 1
@@ -148,7 +148,7 @@ def image_to_npy(image_path, prod_cats):
 	i = 1
 	cat_feat = {}
 	cat_prod = {}
-	j = -1
+	j = 0
 	flag = 0
 	dummy = 0
 	print("Reading Images")
@@ -178,7 +178,7 @@ def image_to_npy(image_path, prod_cats):
 			except KeyError:
 				dummy += 1
 
-			if i%50000 == 0:
+			if i%100000 == 0:
 				print("Saving")
 				saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
 				j+=1
@@ -215,7 +215,7 @@ def image_to_npy(image_path, prod_cats):
 
 
 if __name__ == '__main__':
-	#pc, u =read_meta('data/meta.json')
+	pc, u =read_meta('data/meta.json')
 	with open('saved/prod_cats.pickle', 'rb') as file:
 		pc = pickle.load(file)
 	print("Dictionary Read")
@@ -223,7 +223,7 @@ if __name__ == '__main__':
 		print('{}  {}'.format(i, len(pc[i])))
 	map(pc)
 	relation('data/meta.json', pc)
-	#image_to_npy('data/image_features', pc)
+	image_to_npy('data/image_features', pc)
 
 
 
