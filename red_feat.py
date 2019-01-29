@@ -107,7 +107,7 @@ if __name__ == '__main__':
 	all_feat = []
 	for cat in master_cats:
 		try:
-			if not cat == 'Jewelry':
+			if cat == 'Women':
 				print(cat)
 				combine_files(cat = cat)
 				#run_paper(cat = cat)
