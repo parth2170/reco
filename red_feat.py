@@ -3,6 +3,7 @@ import numpy as np
 import gc
 import os
 from tqdm import tqdm
+import re
 
 def reduce(Y_path, cat):
 	#Reading Y matrix
@@ -100,7 +101,7 @@ def get_relations():
 
 
 if __name__ == '__main__':
-	
+
 	get_relations()
 	master_cats = ['Baby', 'Boots', 'Boys', 'Girls', 'Jewelry', 'Men', 'Novelty Costumes', 'Shoes and Accessories', 'Women']
 	all_feat = []
