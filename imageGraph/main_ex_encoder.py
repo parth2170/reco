@@ -4,6 +4,7 @@ import pickle
 import struct
 import numpy as np
 import re
+import gc
 
 res = open("data/results.txt","w")
 parser = OptionParser()
@@ -31,6 +32,8 @@ if (bool(options.eval_for_original)):
             for i in feat[index]:
                 f.write(bytearray(struct.pack("f", i)))
         f.close()
+    del ain
+    gc.collect()
     cmd  = "make "+tail[:-4]+".out"
     ret = os.system(cmd)
     res.write(str(ret))
