@@ -40,6 +40,8 @@ def combine_files(cat):
 					all_feat.extend(feat)
 				else:
 					all_id.extend(feat)
+				del feat
+				gc.collect()
 	np.save('imageGraph/data/'+cat+'_prod_feat_ref_list.npy', all_id)
 	np.save('imageGraph/data/'+cat+'.npy', all_feat)
 	print(cat)
@@ -105,14 +107,19 @@ if __name__ == '__main__':
 	get_relations()
 	master_cats = ['Baby', 'Boots', 'Boys', 'Girls', 'Jewelry', 'Men', 'Novelty Costumes', 'Shoes and Accessories', 'Women']
 	all_feat = []
+
+	'''
 	for cat in master_cats:
 		try:
+			#Women, Shoes, Jewelry running out of memory
 			if cat == 'Women':
 				print(cat)
 				combine_files(cat = cat)
 				#run_paper(cat = cat)
 				#feat = reduce('imageGraph/Y.txt-also_viewed-100-0.000000.txt', 'saved/{}'.format(cat))
 				#all_feat.extend(feat)
+	'''
+	combine_files(cat = 'all')
 
 		except FileNotFoundError as error:
 			print(error)
