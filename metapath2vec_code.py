@@ -90,7 +90,7 @@ def metapath_gen(user):
 	return outfile
 
 
-def metapath2vec(code_dir, metapaths, embout):
+def metapath2vec(code_dir, outpath, embout):
 	print("Running Metapath2Vec")
 	os.chdir(code_dir)
 	pp = 1
@@ -110,14 +110,14 @@ def distance(code_dir, embout):
 
 def main():
 
-	numwalks = 100
+	numwalks = 50
 	walklength = 20
 	global user_prod_dict
 	global prod_user_dict
 	reviews = "data/reviews.json"
-	outpath = "metapath2vec/metapaths.txt"
-	embout = "metapath2vec/metapath2vec_embeddings.txt"
-	metapath2vec_dir = "/Users/deepthought/code/docsim/code_metapath2vec"
+	outpath = "reco/metapath2vec/metapaths.txt"
+	embout = "reco/metapath2vec/metapath2vec_embeddings.txt"
+	metapath2vec_dir = "../code_metapath2vec"
 
 	print("Please specify all the parameters and paths in the script itself")
 	print("Enter 1 to read data and generate metapaths")
@@ -134,11 +134,11 @@ def main():
 			pickle.dump(prod_user_dict, file)
 	if task == 2:
 		num_cores = multiprocessing.cpu_count()
-		#print('Running on {} cores'.format(num_cores))
-		#results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(user = i) for i in tqdm(user_prod_dict))	
-		results = []
-		for user in tqdm(user_prod_dict):
-			results.append(metapath_gen(user))
+		print('Running on {} cores'.format(num_cores))
+		results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(user = i) for i in tqdm(user_prod_dict))	
+		#results = []
+		#for user in tqdm(user_prod_dict):
+		#	results.append(metapath_gen(user))
 		print("Saving Metapaths at " + outpath)
 		with open(outpath, 'w') as file:
 			for paths in tqdm(results):
