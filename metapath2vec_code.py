@@ -68,24 +68,24 @@ def metapath_gen(user):
 		for i in range(walklength):
 			try:
 				prods = user_prod_dict[user]
-			except KeyError:
-				continue
+			except KeyError as error:
+				print(error)
 			nump = len(prods)
 			if nump == 0:
 				continue
 			prodid = random.randrange(nump)
 			prod = prods[prodid]
-			outline = " "+prod
+			outline = outline+" "+prod
 			try:
 				users = prod_user_dict[prod]
-			except KeyError:
-				continue
+			except KeyError as error:
+				print(error)
 			numu = len(users)
 			if numu == 0:
 				continue
 			userid = random.randrange(numu)
 			user = users[userid]
-			outline = " "+user
+			outline = outline+" "+user
 		outfile.append(str(outline + "\n"))
 	return outfile
 
@@ -133,12 +133,12 @@ def main():
 		with open('metapath2vec/prod_user_dict.pickle', 'wb') as file:
 			pickle.dump(prod_user_dict, file)
 	if task == 2:
-		num_cores = multiprocessing.cpu_count()
-		print('Running on {} cores'.format(num_cores))
-		results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(user = i) for i in tqdm(user_prod_dict))	
-		#results = []
-		#for user in tqdm(user_prod_dict):
-		#	results.append(metapath_gen(user))
+		#num_cores = multiprocessing.cpu_count()
+		#print('Running on {} cores'.format(num_cores))
+		#results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(user = i) for i in tqdm(user_prod_dict))	
+		results = []
+		for user in tqdm(user_prod_dict):
+			results.append(metapath_gen(user))
 		print("Saving Metapaths at " + outpath)
 		with open(outpath, 'w') as file:
 			for paths in tqdm(results):
