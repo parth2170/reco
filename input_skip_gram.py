@@ -3,6 +3,9 @@ import pickle
 import math
 import collections
 import itertools
+from tqdm import tqdm
+import os
+import gc
 
 data_index = 0
 
@@ -10,17 +13,18 @@ class Options(object):
 
 	def __init__(self, datafile, vocabulary_size):
 		self.vocabulary_size = vocabulary_size
-		self.save_path = "skip_gram_mod"
+		self.save_path = "skip_gram"
 		self.vocabulary = self.read_data(datafile)
 		data_or, self.count, self.vocab_words = self.build_dataset(self.vocabulary, self.vocabulary_size)
 		self.train_data = data_or
 		self.sample_table = self.init_sample_table()
 
 	def read_data(self, pathfile):
+		print('Reading paths')
 		paths = []
-		with open(pathfile, 'r') as file:
+		with open(pathfile, 'r') as (file):
 			i = 0
-			for line in file:
+			for line in tqdm(file):
 				paths.extend(line[:-1].split())
 				i+=1
 		print("Data Read")
@@ -30,7 +34,8 @@ class Options(object):
 		count = [['UNK', -1]]
 		count.extend(collections.Counter(words).most_common(n_words - 1))
 		dictionary = dict()
-		for word, _ in count:
+		print('Making dictionary')
+		for word, _ in tqdm(count):
 			dictionary[word] = len(dictionary)
 		data = list()
 		unk_count = 0
@@ -48,7 +53,26 @@ class Options(object):
 			pickle.dump(reversed_dictionary, file)
 		return data, count, reversed_dictionary
 
+	def init_sample_table_mod(self):
+		print('Making Modified Sampling Table')
+		with open('metapath2vec/user_prod_dict.pickle', 'rb') as file:
+			up = pickle.load(file)
+		users = list(up.keys())
+		del up
+		gc.collect()
+		count_ = [ele[1] for ele in self.count if ele[0] in users]
+		pow_freq = np.array(count_)**0.75
+		power = sum(pow_freq)
+		ratio = pow_freq/power
+		table_size = 1e8
+		count_ = np.round(ratio*table_size)
+		sample_table = []
+		for idx, x in tqdm(enumerate(count_)):
+			sample_table += [idx] * int(x)
+		return np.array(sample_table)
+
 	def init_sample_table(self):
+		print('Making Sampling Table')
 		count_ = [ele[1] for ele in self.count]
 		pow_freq = np.array(count_)**0.75
 		power = sum(pow_freq)
@@ -56,7 +80,7 @@ class Options(object):
 		table_size = 1e8
 		count_ = np.round(ratio*table_size)
 		sample_table = []
-		for idx, x in enumerate(count_):
+		for idx, x in tqdm(enumerate(count_)):
 			sample_table += [idx] * int(x)
 		return np.array(sample_table)
 

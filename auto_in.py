@@ -223,7 +223,7 @@ if __name__ == '__main__':
 		print('{}  {}'.format(i, len(pc[i])))
 	map(pc)
 	relation('data/meta.json', pc)
-	image_to_npy('data/image_features', pc)
+	#image_to_npy('data/image_features', pc)
 
 
 

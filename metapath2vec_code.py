@@ -153,6 +153,11 @@ def main():
 		gc.collect()
 		print('Reduced number of users = {}'.format(len(user_prod_dict)))
 		print('Reduced number of prods = {}'.format(len(prod_user_dict)))
+		print('Saving New Dictionaries')
+		with open('metapath2vec/user_prod_dict_mod.pickle', 'wb') as file:
+			pickle.dump(user_prod_dict, file)
+		with open('metapath2vec/prod_user_dict_mod.pickle', 'wb') as file:
+			pickle.dump(prod_user_dict, file)
 		results = []
 		for user in tqdm(user_prod_dict):
 			results.append(metapath_gen(user = user, numwalks = numwalks, walklength = walklength, user_prod_dict = user_prod_dict, prod_user_dict = prod_user_dict))

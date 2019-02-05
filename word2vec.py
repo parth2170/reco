@@ -17,7 +17,7 @@ from input_skip_gram import Options
 from skip_gram_mod import skipgram
 
 class word2vec:
-	def __init__(self, inputfile, vocabulary_size = 8000, embedding_dim = 300, epoch_num = 10, batch_size = 16, window_size = 5, neg_sample_num = 10):
+	def __init__(self, inputfile, vocabulary_size = (362861+637228)*0 + 100, embedding_dim = 100, epoch_num = 10, batch_size = 16, window_size = 5, neg_sample_num = 10):
 		self.op = Options(inputfile, vocabulary_size)
 		self.embedding_dim = embedding_dim
 		self.window_size = window_size
@@ -27,12 +27,13 @@ class word2vec:
 		self.neg_sample_num = neg_sample_num
 
 	def train(self):
+		print('Building Model')
 		model = skipgram(self.vocabulary_size, self.embedding_dim)
 		if torch.cuda.is_available():
 			model.cuda()
 
 		optimizer = optim.SGD(model.parameters(), lr = 0.2)
-
+		print('Start Training\n\n')
 		for epoch in range(self.epoch_num):
 
 			start = time.time()
@@ -61,7 +62,7 @@ class word2vec:
 				embed_grad = next(next(model.children()).parameters()).grad
 				for i in range(len(pos_u)):
 					if int(pos_u[i]) in model.prod_codes:
-						embed_grad[i] = torch.tensor(np.zeros(300), dtype = torch.double)
+						embed_grad[i] = torch.tensor(np.zeros(100), dtype = torch.double)
 
 				optimizer.step()
 
@@ -80,5 +81,5 @@ class word2vec:
 			print("/nOptimization Finished")
 
 if __name__ == '__main__':
-	wc = word2vec('node2vec/sample_paths_node2vec.txt')
+	wc = word2vec('metapath2vec/metapaths.txt')
 	wc.train()

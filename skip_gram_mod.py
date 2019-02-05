@@ -4,10 +4,11 @@ import torch.nn as nn
 import torch.nn.functional as F 
 import numpy as np 
 from input_skip_gram import *
+from tqdm import tqdm
 
-feat_path = 'saved/deep_autoe_features.pickle'
+feat_path = 'skip_gram/all.npy'
 rev_dict_path = 'skip_gram/reversed_dictionary.pickle'
-pord_list_path = 'saved/prod_feat_ref_list.npy'
+pord_list_path = 'skip_gram/all_prod_feat_ref_list.npy'
 
 class skipgram(nn.Module):
 
@@ -27,12 +28,12 @@ class skipgram(nn.Module):
 	def init_emb(self):
 		initrange = 0.5 / self.embedding_dim
 		#Make weight matrix
-		feat = None
-		with open(feat_path, 'rb') as file:
-			feat = pickle.load(file)
+		print('Loading Embedding data')
+		feat = np.load(feat_path)
 		pord_list = np.load(pord_list_path).tolist()
+		print('Initializing Embeddings')
 		emb = np.random.uniform(-initrange, initrange, size = (self.vocab_size, self.embedding_dim))
-		for node in self.reversed_dictionary:
+		for node in tqdm(self.reversed_dictionary):
 			if self.reversed_dictionary[node] in pord_list:
 				emb[node] = feat[pord_list.index(self.reversed_dictionary[node])]
 				self.prod_codes.append(node)
