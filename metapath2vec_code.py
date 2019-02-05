@@ -7,15 +7,8 @@ from joblib import Parallel, delayed
 import multiprocessing
 import progressbar
 from tqdm import tqdm
+import gc
 
-
-numwalks = 50
-walklength = 20
-
-with open('metapath2vec/user_prod_dict.pickle', 'rb') as file:
-	user_prod_dict = pickle.load(file)
-with open('metapath2vec/prod_user_dict.pickle', 'rb') as file:
-	prod_user_dict = pickle.load(file)
 
 def read_data(reviews, ispickle, min_rating):
 
@@ -60,7 +53,7 @@ def read_data(reviews, ispickle, min_rating):
 	print("\nData read")
 	return user_prod_dict, prod_user_dict
 
-def metapath_gen(user):
+def metapath_gen(user, numwalks, walklength, user_prod_dict, prod_user_dict):
 	outfile = []
 	user0 = user
 	for j in range(numwalks):
@@ -108,12 +101,31 @@ def distance(code_dir, embout):
 	cmd = "./distance "+embout
 	os.system(cmd)
 
+def reverse_dict(D):
+	rD = {}
+	for i in tqdm(D):
+		for j in D[i]:
+			try:
+				rD[j].append(i)
+			except KeyError:
+				rD[j] = []
+				rD[j].append(i)
+	return rD
+
+def mod_dict(D, min_num):
+	print('Modifying Dictionary')
+	new_D = {}
+	for i in tqdm(D):
+		if len(D[i]) > min_num:
+			new_D[i] = D[i]
+	rD = reverse_dict(new_D)
+	ch = 5
+	return new_D, rD
+
 def main():
 
 	numwalks = 50
 	walklength = 20
-	global user_prod_dict
-	global prod_user_dict
 	reviews = "data/reviews.json"
 	outpath = "metapath2vec/metapaths.txt"
 	embout = "reco/metapath2vec/metapath2vec_embeddings"
@@ -133,12 +145,17 @@ def main():
 		with open('metapath2vec/prod_user_dict.pickle', 'wb') as file:
 			pickle.dump(prod_user_dict, file)
 	if task == 2:
-		#num_cores = multiprocessing.cpu_count()
-		#print('Running on {} cores'.format(num_cores))
-		#results = Parallel(n_jobs=num_cores)(delayed(metapath_gen)(user = i) for i in tqdm(user_prod_dict))	
+		with open('metapath2vec/user_prod_dict.pickle', 'rb') as file:
+			D = pickle.load(file)
+		print('Original Number of users = {}'.format(len(D)))
+		user_prod_dict, prod_user_dict = mod_dict(D = D, min_num = 2)
+		del D
+		gc.collect()
+		print('Reduced number of users = {}'.format(len(user_prod_dict)))
+		print('Reduced number of prods = {}'.format(len(prod_user_dict)))
 		results = []
 		for user in tqdm(user_prod_dict):
-			results.append(metapath_gen(user))
+			results.append(metapath_gen(user = user, numwalks = numwalks, walklength = walklength, user_prod_dict = user_prod_dict, prod_user_dict = prod_user_dict))
 		print("Saving Metapaths at " + outpath)
 		with open(outpath, 'w') as file:
 			for paths in tqdm(results):
