@@ -5,24 +5,18 @@ import os
 from tqdm import tqdm
 import re
 
-def reduce(Y_path, cat):
-	#Reading Y matrix
-	with open(Y_path) as file:
-		data = json.load(file)
-		Y = np.array(data['U'])
-	print('Shape of Y = {}'.format(np.shape(Y)))
-	#Reading features 
-	feat = np.load(cat+'.npy')
+def reduce(Y, feat):
 	print('Shape of old features = {}'.format(np.shape(feat[0])))
 	new_feat = np.matmul(feat, Y)
 	print('Shape of new features = {}'.format(np.shape(new_feat[0])))
-	del feat
-	del Y
-	gc.collect()
 	return new_feat
 
 
-def combine_files(cat): 
+def combine_files(cat):
+	with open(Y_path) as file:
+		data = json.load(file)
+		Y = np.array(data['U'])
+	print('Shape of Y = {}'.format(np.shape(Y))) 
 	all_files = [f for f in os.listdir('saved/') if f.endswith('.npy')]
 	all_feat = []
 	all_id = []
@@ -37,13 +31,14 @@ def combine_files(cat):
 			if catch == cat:
 				feat = np.load("saved/"+file)
 				if len(feat[0]) == 4096:
+					feat = reduce(Y, feat)
 					all_feat.extend(feat)
 				else:
 					all_id.extend(feat)
 				del feat
 				gc.collect()
-	np.save('imageGraph/data/'+cat+'_prod_feat_ref_list.npy', all_id)
-	np.save('imageGraph/data/'+cat+'.npy', all_feat)
+	np.save('saved/'+cat+'_prod_feat_ref_list.npy', all_id)
+	np.save('saved/'+cat+'.npy', all_feat)
 	print(cat)
 	print("Number of products = {}".format(len(all_id)))
 	del all_feat
@@ -108,17 +103,7 @@ if __name__ == '__main__':
 	master_cats = ['Baby', 'Boots', 'Boys', 'Girls', 'Jewelry', 'Men', 'Novelty Costumes', 'Shoes and Accessories', 'Women']
 	all_feat = []
 
-	'''
-	for cat in master_cats:
-		try:
-			#Women, Shoes, Jewelry running out of memory
-			if cat == 'Women':
-				print(cat)
-				combine_files(cat = cat)
-				#run_paper(cat = cat)
-				#feat = reduce('imageGraph/Y.txt-also_viewed-100-0.000000.txt', 'saved/{}'.format(cat))
-				#all_feat.extend(feat)
-	'''
+
 	combine_files(cat = 'all')
 
 		except FileNotFoundError as error:
