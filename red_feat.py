@@ -12,7 +12,7 @@ def reduce(Y, feat):
 	return new_feat
 
 
-def combine_files(cat):
+def combine_files(cat, Y_path):
 	with open(Y_path) as file:
 		data = json.load(file)
 		Y = np.array(data['U'])
@@ -99,5 +99,5 @@ def get_relations():
 
 if __name__ == '__main__':
 
-	combine_files(cat = 'all')
+	combine_files(cat = 'all', Y_path = 'imageGraph/Y.txt-bought_together-100-0.000000.txt')
 
