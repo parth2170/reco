@@ -59,7 +59,7 @@ def graph():
 
 
 def node2vec(graph, name):
-	node2vec = Node2Vec(graph, dimensions=300, walk_length=20, num_walks=100, workers=int(psutil.cpu_count())) 
+	node2vec = Node2Vec(graph, dimensions=100, walk_length=15, num_walks=50, workers=int(psutil.cpu_count())) 
 	print("Saving paths as txt")
 	with open(outfiles+"sample_paths_node2vec{}.txt".format(name), 'w') as foo:
 		for q in node2vec.walks:
@@ -132,7 +132,7 @@ def main():
 	if task == 2 or task == 4:
 		if G == None:
 			G = nx.read_gpickle(network_path+"network.gpickle")
-
+		'''
 		t1 = datetime.datetime.now()
 		print("Splitting graph into Two")
 		#bi = community.kernighan_lin_bisection(G)
@@ -156,7 +156,8 @@ def main():
 		t1 = datetime.datetime.now()
 		print("Time taken = {}".format(t1-t2))
 		node2vec(graph = g1, name = 1)
-		node2vec(graph = g2, name = 2)
+		'''
+		node2vec(graph = G, name = 0)
 	if task == 3:
 		build_svd_feat_file()
 
