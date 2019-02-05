@@ -16,6 +16,8 @@ class Options(object):
 		self.save_path = "skip_gram"
 		self.vocabulary = self.read_data(datafile)
 		data_or, self.count, self.vocab_words = self.build_dataset(self.vocabulary, self.vocabulary_size)
+		del self.vocabulary
+		gc.collect()
 		self.train_data = data_or
 		self.sample_table = self.init_sample_table()
 
@@ -27,6 +29,8 @@ class Options(object):
 			for line in tqdm(file):
 				paths.extend(line[:-1].split())
 				i+=1
+				if i == 1000:
+					break
 		print("Data Read")
 		return paths
 

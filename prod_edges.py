@@ -2,8 +2,9 @@ import json
 import ast
 import pickle
 import numpy as np 
+from tqdm import tqdm
+import random
 
-#prods_master = np.load("saved/prod_feat_ref_list.npy")
 
 def bought_together(path, ispickle):
 	#prod-prod edge occours if they have been bought together according to metadata
@@ -32,9 +33,7 @@ def bought_together(path, ispickle):
 					break
 	else:
 		with open(path, 'r') as file:
-			for line in file:
-				if(i%10000 == 0):
-					print(i)
+			for line in tqdm(file):
 				jline = ast.literal_eval(line)
 				i+=1
 				try:
@@ -43,23 +42,15 @@ def bought_together(path, ispickle):
 					bt = [dt['related'][keys] for keys in dt['related'].keys()]
 					bt = [j for i in bt for j in i]
 					bt = list(set(bt))
+					bt = random.sample(bt, int(0.10*len(bt)))
 					for p in bt:
 						#if (p in prods_master) and (prod_id in prods_master):
-							edges.append((prod_id, p))
+						edges.append((prod_id, p))
 				except KeyError as error:
 					unrelated.append(jline['asin'])
 	print("Data read")
-	print("\n++++++++++ prod-prod edges based on bought_together criteria ++++++++++\n")
+	print("\n++++++++++ prod-prod edges ++++++++++\n")
 	print("Number of edges = {}".format(len(edges)))
 	print("Number of products with no related products = {}".format(len(unrelated)))
 	return edges, unrelated
 
-
-def image_similarity():
-	#Implement from 
-	#http://cseweb.ucsd.edu/~jmcauley/pdfs/sigir15.pdf
-	#https://dl.acm.org/citation.cfm?id=2783381
-
-	return None
-
- 
