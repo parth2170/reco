@@ -9,7 +9,7 @@ import progressbar
 from tqdm import tqdm
 
 
-numwalks = 100
+numwalks = 50
 walklength = 20
 
 with open('metapath2vec/user_prod_dict.pickle', 'rb') as file:
@@ -97,7 +97,7 @@ def metapath2vec(code_dir, outpath, embout):
 	size = 128
 	window = 7
 	negative = 5
-	outpath = "../"+outpath
+	outpath = "../reco/"+outpath
 	embout = "../"+embout
 	cmd = "./metapath2vec -train "+outpath+" -output "+embout+" -pp "+str(pp)+" -size "+str(size)+" -window "+str(window)+" -negative "+str(negative)+" -threads 32"
 	os.system(cmd)
@@ -115,8 +115,8 @@ def main():
 	global user_prod_dict
 	global prod_user_dict
 	reviews = "data/reviews.json"
-	outpath = "reco/metapath2vec/metapaths.txt"
-	embout = "reco/metapath2vec/metapath2vec_embeddings.txt"
+	outpath = "metapath2vec/metapaths.txt"
+	embout = "reco/metapath2vec/metapath2vec_embeddings"
 	metapath2vec_dir = "../code_metapath2vec"
 
 	print("Please specify all the parameters and paths in the script itself")
@@ -126,7 +126,7 @@ def main():
 	print("Enter 4 to run distance on generated embeddings")
 	task = int(input("Enter : "))
 	if task == 1:
-		user_prod_dict, prod_user_dict = read_data(reviews = reviews, ispickle = False, min_rating = 1)	
+		user_prod_dict, prod_user_dict = read_data(reviews = reviews, ispickle = False, min_rating = 3)	
 		print('Saving Dictionaries')
 		with open('metapath2vec/user_prod_dict.pickle', 'wb') as file:
 			pickle.dump(user_prod_dict, file)
