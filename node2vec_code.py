@@ -30,12 +30,15 @@ def prod_prod_edge():
 	temp, unrelated = bought_together(path = 'data/meta.json', ispickle = False)
 	with open('metapath2vec/prod_user_dict_mod.pickle', 'rb') as file:
 		prods_master = pickle.load(file)
-	prods_master = list(prods_master.keys())
 	edges = []
 	for e in tqdm(temp):
 		e1, e2 = e
-		if e1 in prods_master and e2 in prods_master:
+		try:
+			prods_master[e1]
+			prods_master[e2]
 			edges.append(e)
+		except KeyError:
+			continue
 	return edges
 
 def graph():
