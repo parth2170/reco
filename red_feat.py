@@ -99,12 +99,5 @@ def get_relations():
 
 if __name__ == '__main__':
 
-	get_relations()
-	master_cats = ['Baby', 'Boots', 'Boys', 'Girls', 'Jewelry', 'Men', 'Novelty Costumes', 'Shoes and Accessories', 'Women']
-	all_feat = []
-
-
 	combine_files(cat = 'all')
 
-		except FileNotFoundError as error:
-			print(error)
