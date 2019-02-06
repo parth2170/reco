@@ -5,6 +5,7 @@ import torch.nn.functional as F
 import numpy as np 
 from input_skip_gram import *
 from tqdm import tqdm
+import gc
 
 feat_path = 'skip_gram/all.npy'
 rev_dict_path = 'skip_gram/reversed_dictionary.pickle'
@@ -30,13 +31,18 @@ class skipgram(nn.Module):
 		#Make weight matrix
 		print('Loading Embedding data')
 		feat = np.load(feat_path)
-		pord_list = np.load(pord_list_path).tolist()
+		plist = np.load(pord_list_path).tolist()
+		pord_list = dict(zip(plist, [i for i in range(len(plist))]))
+		del plist
+		gc.collect()
 		print('Initializing Embeddings')
 		emb = np.random.uniform(-initrange, initrange, size = (self.vocab_size, self.embedding_dim))
 		for node in tqdm(self.reversed_dictionary):
-			if self.reversed_dictionary[node] in pord_list:
-				emb[node] = feat[pord_list.index(self.reversed_dictionary[node])]
+			try:
+				emb[node] = feat[pord_list[self.reversed_dictionary[node]]]
 				self.prod_codes.append(node)
+			except KeyError:
+				continue
 		emb = emb.astype(np.float64)
 		self.u_embeddings.weight.data = torch.tensor(emb, dtype = torch.double)
 		self.v_embeddings.weight.data.uniform_(-0,0)

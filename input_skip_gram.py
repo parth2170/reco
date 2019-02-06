@@ -29,8 +29,6 @@ class Options(object):
 			for line in tqdm(file):
 				paths.extend(line[:-1].split())
 				i+=1
-				if i == 1000:
-					break
 		print("Data Read")
 		return paths
 

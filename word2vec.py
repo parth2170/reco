@@ -17,7 +17,7 @@ from input_skip_gram import Options
 from skip_gram_mod import skipgram
 
 class word2vec:
-	def __init__(self, inputfile, vocabulary_size = (362861+637228)*0 + 100, embedding_dim = 100, epoch_num = 10, batch_size = 16, window_size = 5, neg_sample_num = 10):
+	def __init__(self, inputfile, vocabulary_size = (362861+637228), embedding_dim = 100, epoch_num = 10, batch_size = 16, window_size = 5, neg_sample_num = 10):
 		self.op = Options(inputfile, vocabulary_size)
 		self.embedding_dim = embedding_dim
 		self.window_size = window_size
@@ -78,7 +78,7 @@ class word2vec:
 					batch_new = batch_num
 					start = time.time()
 				batch_num += 1
-			print("/nOptimization Finished")
+		print("\nOptimization Finished")
 
 if __name__ == '__main__':
 	wc = word2vec('metapath2vec/metapaths.txt')
