@@ -17,7 +17,7 @@ from input_skip_gram import Options
 from skip_gram_mod import skipgram
 
 class word2vec:
-	def __init__(self, inputfile, vocabulary_size = (362861+637228), embedding_dim = 100, epoch_num = 10, batch_size = 16, window_size = 5, neg_sample_num = 10):
+	def __init__(self, inputfile, vocabulary_size = (362861*0+637228), embedding_dim = 100, epoch_num = 10, batch_size = 16, window_size = 5, neg_sample_num = 10):
 		self.op = Options(inputfile, vocabulary_size)
 		self.embedding_dim = embedding_dim
 		self.window_size = window_size
@@ -30,6 +30,7 @@ class word2vec:
 		print('Building Model')
 		model = skipgram(self.vocabulary_size, self.embedding_dim)
 		if torch.cuda.is_available():
+			print('!!GPU!!')
 			model.cuda()
 
 		optimizer = optim.SGD(model.parameters(), lr = 0.2)
@@ -49,6 +50,7 @@ class word2vec:
 				neg_v = Variable(torch.LongTensor(neg_v))
 
 				if torch.cuda.is_available():
+					print('!!GPU!!')
 					pos_u = pos_u.cuda()
 					pos_v = pos_v.cuda()
 					neg_v = neg_v.cuda()
