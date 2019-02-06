@@ -119,7 +119,20 @@ def mod_dict(D, min_num):
 		if len(D[i]) > min_num:
 			new_D[i] = D[i]
 	rD = reverse_dict(new_D)
-	ch = 5
+	#Check if products' features are available
+	print('Checking if prods have image features')
+	with open('cboi/prod_embed_cboi.pickle', 'rb') as file:
+		feat_dict = pickle.load(file)
+	prods = list(rD.keys())
+	c = 0
+	for i in tqdm(prods):
+		try:
+			feat_dict[i]
+		except KeyError as e:
+			rD.pop(i)
+			c += 1
+	print(c)
+	new_D = reverse_dict(rD)
 	return new_D, rD
 
 def main():
