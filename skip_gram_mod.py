@@ -72,7 +72,7 @@ class skipgram(nn.Module):
 			try:
 				u.append(up[self.reversed_dictionary[idx]])
 				f.append(self.u_embeddings.weight.data[idx])
-				print(len(f))
+				print(self.u_embeddings.weight.data[idx])
 				break
 			except KeyError:
 				continue
