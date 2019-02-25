@@ -88,11 +88,11 @@ def metapath2vec(code_dir, outpath, embout):
 	print("Running Metapath2Vec")
 	os.chdir(code_dir)
 	pp = 1
-	size = 128
+	size = 100
 	window = 7
 	negative = 5
 	outpath = "../reco/"+outpath
-	embout = "../"+embout
+	embout = "../"+embout+'100'
 	cmd = "./metapath2vec -train "+outpath+" -output "+embout+" -pp "+str(pp)+" -size "+str(size)+" -window "+str(window)+" -negative "+str(negative)+" -threads 32"
 	os.system(cmd)
 	print("Embddings saved at "+embout)
