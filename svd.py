@@ -6,10 +6,11 @@ import pickle
 
 def rating():
 	data = []
-	with open('data/reviews.json', 'r') as file:
+	with open('data/reviews.json', 'rb') as file:
 		for line in tqdm(file):
 			try:
-				jline = ast.literal_eval(line)
+				#jline = ast.literal_eval(line)
+				jline = ast.literal_eval(line.decode('UTF-8'))
 			except SyntaxError:
 				continue
 			try:
