@@ -121,8 +121,12 @@ def mod_dict(D, min_num):
 	rD = reverse_dict(new_D)
 	#Check if products' features are available
 	print('Checking if prods have image features')
-	with open('cboi/prod_embed_cboi.pickle', 'rb') as file:
-		feat_dict = pickle.load(file)
+	print('Loading Images')
+	pf = np.load('skip_gram/all.npy')
+	print('Loading Ids')
+	pid = np.load('skip_gram/all_prod_feat_ref_list.npy')
+	print('Making dictionary')
+	prod_feat = dict(zip(pid, pf))
 	prods = list(rD.keys())
 	c = 0
 	for i in tqdm(prods):
