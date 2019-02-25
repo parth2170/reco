@@ -115,12 +115,3 @@ class Options(object):
 		neg_v = np.random.choice(self.sample_table, size = (batch_size*2*window_size, neg_count))
 		return np.array(pos_u), np.array(pos_v), neg_v
 
-
-def cosine_similarity(v1, v2):
-	sumxx, sumxy, sumyy = 0, 0, 0
-	for i in range(len(v1)):
-		x = v1[i]; y = v2[i]
-		sumxx += x*x
-		sumyy += y*y
-		sumxy += x*y
-	return sumxy/math.sqrt(sumxx*sumyy)
