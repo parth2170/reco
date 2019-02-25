@@ -8,7 +8,10 @@ def rating():
 	data = []
 	with open('data/reviews.json', 'r') as file:
 		for line in tqdm(file):
-			jline = ast.literal_eval(line)
+			try:
+				jline = ast.literal_eval(line)
+			except SyntaxError:
+				continue
 			try:
 				dt = dict((k, jline[k]) for k in ('reviewerID', 'asin', 'overall'))
 				data.append(dt)
