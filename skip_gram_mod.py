@@ -66,11 +66,13 @@ class skipgram(nn.Module):
 	def save_embedding(self, file_name):
 		embeds = self.u_embeddings.weight.data
 		outfile = {}
-		with open('metapath2vec/user_prod_dict_mod.pickle', 'rb') as file:
-			up = pickle.load(file)
+		#with open('metapath2vec/user_prod_dict_mod.pickle', 'rb') as file:
+		#	up = pickle.load(file)
 		for idx in tqdm(self.reversed_dictionary):
 			try:
 				up[self.reversed_dictionary[idx]]
 				outfile[self.reversed_dictionary[idx]] = embeds[idx]
+			except KeyError:
+				continue
 		with open(file_name, 'wb') as file:
 			pickle.dump(outfile, file)
