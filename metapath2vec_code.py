@@ -8,6 +8,7 @@ import multiprocessing
 import progressbar
 from tqdm import tqdm
 import gc
+import numpy as np 
 
 
 def read_data(reviews, ispickle, min_rating):
@@ -131,7 +132,7 @@ def mod_dict(D, min_num):
 	c = 0
 	for i in tqdm(prods):
 		try:
-			feat_dict[i]
+			prod_feat[i]
 		except KeyError as e:
 			rD.pop(i)
 			c += 1
@@ -139,11 +140,12 @@ def mod_dict(D, min_num):
 	new_D = reverse_dict(rD)
 	print('Number of users = {}'.format(len(new_D)))
 	#Reduce number of users
-	num_users = 25000
+	num_users = 50000
 	random.seed(1000)
-	sample = random.sample(new_D.keys())
+	sample = random.sample(new_D.keys(), num_users)
 	sampled_dict = { your_key: new_D[your_key] for your_key in sample }
-	return new_D, rD
+	rD = reverse_dict(sampled_dict)
+	return sampled_dict, rD
 
 def main():
 
