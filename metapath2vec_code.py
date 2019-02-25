@@ -133,6 +133,12 @@ def mod_dict(D, min_num):
 			c += 1
 	print(c)
 	new_D = reverse_dict(rD)
+	print('Number of users = {}'.format(len(new_D)))
+	#Reduce number of users
+	num_users = 25000
+	random.seed(1000)
+	sample = random.sample(new_D.keys())
+	sampled_dict = { your_key: new_D[your_key] for your_key in sample }
 	return new_D, rD
 
 def main():
