@@ -29,7 +29,7 @@ def split(path, split_ratio, method, num_ratings):
 
 def run_bmf(method):
 	os.chdir('../svdfeature/svdfeature-1.2.2/demo/basicMF/')
-	comm = ["../../tools/make_feature_buffer {} ua.train.buffer ".format((method+'_train.txt')), "../../tools/make_feature_buffer {} ua.test.buffer ".format((method+'_test.txt'))]
+	comm = ["../../tools/make_feature_buffer {} ua.base.buffer ".format((method+'_train.txt')), "../../tools/make_feature_buffer {} ua.test.buffer ".format((method+'_test.txt'))]
 	run = '../../svd_feature basicMF.conf num_round=40 '
 	os.system(comm[0])
 	os.system(comm[1])
@@ -38,7 +38,7 @@ def run_bmf(method):
 if __name__ == '__main__':
 
 	#Metapath2vec
-	num_ratings = 137156
+	num_ratings = 270504
 	print('Metapath2vec')
 	split('metapath2vec/SVDFeature_input.txt', 0.7, 'metapath2vec', num_ratings = 137156)
 	run_bmf('metapath2vec')
