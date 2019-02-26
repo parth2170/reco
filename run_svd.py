@@ -1,11 +1,12 @@
 import os
 from random import shuffle
+from tqdm import tqdm
 
 num_u = 50000
 num_p = 153985
-num_ratings = 270504
 
-def split(path, split_ratio, method):
+
+def split(path, split_ratio, method, num_ratings):
 	test_file = '../svdfeature/svdfeature-1.2.2/demo/basicMF/'+method+'_test.txt'
 	train_file = '../svdfeature/svdfeature-1.2.2/demo/basicMF/'+method+'_train.txt'
 	test_f = open(test_file, 'w')
@@ -13,15 +14,15 @@ def split(path, split_ratio, method):
 	i = 0
 	data = []
 	with open(path, 'r') as file:
-		for line in file:
+		for line in tqdm(file):
 			data.append(line)
 
 	shuffle(data)
 	train = data[:int(num_ratings*split_ratio)]
 	test = data[int(num_ratings*split_ratio):]
-	for t in train:
+	for t in tqdm(train):
 		train_f.write(t)
-	for t in test:
+	for t in tqdm(test):
 		test_f.write(t)
 	test_f.close()
 	train_f.close()
@@ -35,15 +36,20 @@ def run_bmf(method):
 	os.system(run)
 
 if __name__ == '__main__':
-	#Node2vec
-	print('Node2vec')
-	split('node2vec/SVDFeature_input.txt', 0.7, 'node2vec')
-	run_bmf('node2vec')
-	os.chdir('../../../../reco')
+
 	#Metapath2vec
+	num_ratings = 137156
 	print('Metapath2vec')
-	split('metapath2vec/SVDFeature_input.txt', 0.7, 'metapath2vec')
+	split('metapath2vec/SVDFeature_input.txt', 0.7, 'metapath2vec', num_ratings = 137156)
 	run_bmf('metapath2vec')
+	os.chdir('../../../../reco')
+
+	#Node2vec
+	num_ratings = 270504
+	print('Node2vec')
+	split('node2vec/SVDFeature_input.txt', 0.7, 'node2vec', num_ratings = 270504)
+	run_bmf('node2vec')
+	
 
 
 
