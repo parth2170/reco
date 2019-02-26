@@ -52,8 +52,8 @@ def node2vec_file(user_codes, product_codes, data):
 	with open("node2vec/SVDFeature_input.txt", 'w') as file:
 		for index, row in data.iterrows():
 			try:
+				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(100) + " " + str(100) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + str(emb_data[row['asin']])[1:-1].replace(", ", " "+ str(product_codes[row['asin']]) + ":") + "\n"
 				i +=1
-				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(300) + " " + str(300) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + str(emb_data[row['asin']])[1:-1].replace(", ", " "+ str(product_codes[row['asin']]) + ":") + "\n"
 				file.write(line1)
 			except KeyError as error:
 				continue
@@ -80,8 +80,8 @@ def metapath2vec_file(user_codes, product_codes, data):
 	with open("metapath2vec/SVDFeature_input.txt", 'w') as file:
 		for index, row in tqdm(data.iterrows()):
 			try:
+				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(100) + " " + str(100) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + str(emb_data[row['asin']])[1:-1].replace(", ", " "+ str(product_codes[row['asin']]) + ":") + "\n"
 				i +=1
-				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(300) + " " + str(300) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + str(emb_data[row['asin']])[1:-1].replace(", ", " "+ str(product_codes[row['asin']]) + ":") + "\n"
 				file.write(line1)
 			except KeyError as error:
 				continue
