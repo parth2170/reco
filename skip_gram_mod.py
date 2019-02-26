@@ -69,7 +69,8 @@ class skipgram(nn.Module):
 		filef = open(file_name, 'w')
 		for idx in tqdm(self.reversed_dictionary):
 			try:
-				filef.write(str(up[self.reversed_dictionary[idx]])+' '+' '.join(str(a) for a in self.u_embeddings.weight.data[idx].cpu().numpy())+'\n')
+				up[self.reversed_dictionary[idx]]
+				filef.write(str(self.reversed_dictionary[idx])+' '+' '.join(str(a) for a in self.u_embeddings.weight.data[idx].cpu().numpy())+'\n')
 			except KeyError:
 				continue
 		filef.close()
