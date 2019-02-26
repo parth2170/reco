@@ -42,8 +42,8 @@ if __name__ == '__main__':
 	os.chdir('../../../../reco')
 	#Metapath2vec
 	print('Metapath2vec')
-	split('metapth2vec/SVDFeature_input.txt', 0.7, 'metapth2vec')
-	run_bmf('metapth2vec')
+	split('metapath2vec/SVDFeature_input.txt', 0.7, 'metapath2vec')
+	run_bmf('metapath2vec')
 
 
 
