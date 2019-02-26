@@ -7,12 +7,17 @@ import pickle
 def rating():
 	data = []
 	with open('data/reviews.json', 'rb') as file:
+		i = 0
 		for line in tqdm(file):
+			#jline = ast.literal_eval(line.decode('UTF-8'))
+			if i == 100:
+				break
+			i += 1
 			try:
 				#jline = ast.literal_eval(line)
 				jline = ast.literal_eval(line.decode('UTF-8'))
 			except SyntaxError:
-				continue
+				print(line.decode('UTF-8'))
 			try:
 				dt = dict((k, jline[k]) for k in ('reviewerID', 'asin', 'overall'))
 				data.append(dt)
@@ -25,17 +30,13 @@ def rating():
 	print("num_users - {} num_prods - {}".format(len(users), len(prods)))
 	user_codes = {item:val for val,item in enumerate(users)}
 	product_codes = {item:val for val,item in enumerate(prods)}
-	with open('saved/user_codes.pickle', 'wb') as file:
-		pickle.dump(user_codes, file)
-	with open('saved/product_codes.pickle', 'wb') as file:
-		pickle.dump(product_codes, file)
-	return data
+	return user_codes, product_codes, data
 
 
-def node2vec_file():
+def node2vec_file(user_codes, product_codes, data):
 	#Read node2vec embeddings file and make dictionary
 	emb_data = {}
-	with open('node2vec/', 'r') as file:
+	with open('node2vec/sample_node2vec_embeddings0', 'r') as file:
 		i = 0
 		for line in file:
 			if(not i):
@@ -57,13 +58,13 @@ def node2vec_file():
 				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(300) + " " + str(300) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + str(emb_data[row['asin']])[1:-1].replace(", ", " "+ str(product_codes[row['asin']]) + ":") + "\n"
 				file.write(line1)
 			except KeyError as error:
-				print(error)
+				continue
 	print("Number of examples in SVDFeature = {}".format(i))
 
 
 def metapath2vec_file(user_codes, product_codes, data):
 	emb_data = {}
-	with open('metapath2vec/metapath2vec_embeddings.txt', 'r') as file:
+	with open('metapath2vec/metapath2vec_embeddings100.txt', 'r') as file:
 		i = 0
 		for line in file:
 			if i <= 1:
@@ -73,6 +74,10 @@ def metapath2vec_file(user_codes, product_codes, data):
 			node = temp[0]
 			emb = list(map(float, temp[1][:-1].split()))
 			emb_data[node] = emb 
+			print(emb)
+			print(node)
+			print(len(emb))
+			break
 	print("No. of embeddings made = {}".format(len(emb_data)))
 
 	#Construct SVDFeature input file
@@ -89,9 +94,6 @@ def metapath2vec_file(user_codes, product_codes, data):
 	print("Number of examples in SVDFeature = {}".format(i))
 
 if __name__ == '__main__':
-	data = rating()
-	with open('saved/user_codes.pickle', 'rb') as file:	
-		user_codes = pickle.load(file)
-	with open('saved/product_codes.pickle', 'rb') as file:
-		product_codes = pickle.load(file)
+	user_codes, product_codes, data = rating()
 	metapath2vec_file(user_codes, product_codes, data)
+	node2vec_file()
