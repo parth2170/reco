@@ -28,7 +28,7 @@ def split(path, split_ratio, method):
 
 def run_bmf(method):
 	os.chdir('../svdfeature/svdfeature-1.2.2/demo/basicMF/')
-	comm = ["../../tools/make_feature_buffer {} {}.buffer ".format((method+'_train.txt'), (method+'_train')), "../../tools/make_feature_buffer {} {}.buffer ".format((method+'_test.txt'), (method+'_test'))]
+	comm = ["../../tools/make_feature_buffer {} ua.train.buffer ".format((method+'_train.txt')), "../../tools/make_feature_buffer {} ua.test.buffer ".format((method+'_test.txt'))]
 	run = '../../svd_feature basicMF.conf num_round=40 '
 	os.system(comm[0])
 	os.system(comm[1])
@@ -36,8 +36,14 @@ def run_bmf(method):
 
 if __name__ == '__main__':
 	#Node2vec
+	print('Node2vec')
 	split('node2vec/SVDFeature_input.txt', 0.7, 'node2vec')
 	run_bmf('node2vec')
+	#Metapath2vec
+	print('Metapath2vec')
+	split('metapth2vec/SVDFeature_input.txt', 0.7, 'metapth2vec')
+	run_bmf('metapth2vec')
+
 
 
 
