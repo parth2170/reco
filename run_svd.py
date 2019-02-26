@@ -39,6 +39,7 @@ if __name__ == '__main__':
 	print('Node2vec')
 	split('node2vec/SVDFeature_input.txt', 0.7, 'node2vec')
 	run_bmf('node2vec')
+	os.chdir('../../../../reco')
 	#Metapath2vec
 	print('Metapath2vec')
 	split('metapth2vec/SVDFeature_input.txt', 0.7, 'metapth2vec')
