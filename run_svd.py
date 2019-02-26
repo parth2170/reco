@@ -17,8 +17,8 @@ def split(path, split_ratio, method):
 			data.append(line)
 
 	shuffle(data)
-	train = data[:num_ratings*split_ratio]
-	test = data[num_ratings*split_ratio:]
+	train = data[:int(num_ratings*split_ratio)]
+	test = data[int(num_ratings*split_ratio):]
 	for t in train:
 		train_file.write(t)
 	for t in test:
