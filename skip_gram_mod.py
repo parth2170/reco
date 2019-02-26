@@ -64,21 +64,15 @@ class skipgram(nn.Module):
 		return self.u_embeddings.weight.data.cpu().numpy()
 
 	def save_embedding(self, file_name):
-		u = []
-		f = []
 		with open('metapath2vec/user_prod_dict_mod.pickle', 'rb') as file:
 			up = pickle.load(file)
+		filef = open(file_name, 'w')
 		for idx in tqdm(self.reversed_dictionary):
 			try:
-				u.append(up[self.reversed_dictionary[idx]])
-				f.append(self.u_embeddings.weight.data[idx])
-				print(self.u_embeddings.weight.data[idx])
-				break
+				filef.write(up[self.reversed_dictionary[idx]]+' '+self.u_embeddings.weight.data[idx].numpy()+'\n')
 			except KeyError:
 				continue
+		filef.close()
 		del up
 		gc.collect()
-		print('Saving')
-		np.save(file_name, f)
-		np.save(file_name+'ref', u)
 		

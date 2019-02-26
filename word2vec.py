@@ -74,7 +74,7 @@ class word2vec:
 					print("Saving model")
 					torch.save(model.state_dict(), 'skip_gram/tmp/skipgram.epoch{}.batch{}'.format(epoch,batch_num))
 					print("Saving Embeddings")
-					model.save_embedding('skip_gram/tmp/embeddings.epoch{}.batch{}.pickle'.format(epoch,batch_num))
+					model.save_embedding('skip_gram/tmp/embeddings.epoch{}.batch{}.txt'.format(epoch,batch_num))
 				if batch_num%1000 == 0:
 					end = time.time()
 					print('epoch = {} batch = {} loss = {} time = {}'.format(epoch, batch_num, loss, end - start))
