@@ -49,7 +49,7 @@ def node2vec_file(user_codes, product_codes, data):
 	#Construct SVDFeature input file
 	
 	i = 0
-	with open(outfiles+"SVDFeature_input.txt", 'w') as file:
+	with open("node2vec/SVDFeature_input.txt", 'w') as file:
 		for index, row in data.iterrows():
 			try:
 				i +=1
@@ -72,10 +72,6 @@ def metapath2vec_file(user_codes, product_codes, data):
 			node = temp[0]
 			emb = list(map(float, temp[1][:-1].split()))
 			emb_data[node] = emb 
-			print(emb)
-			print(node)
-			print(len(emb))
-			break
 	print("No. of embeddings made = {}".format(len(emb_data)))
 
 	#Construct SVDFeature input file
