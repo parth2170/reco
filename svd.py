@@ -10,8 +10,6 @@ def rating():
 		i = 0
 		for line in tqdm(file):
 			#jline = ast.literal_eval(line.decode('UTF-8'))
-			if i == 100:
-				break
 			i += 1
 			try:
 				#jline = ast.literal_eval(line)
@@ -96,4 +94,4 @@ def metapath2vec_file(user_codes, product_codes, data):
 if __name__ == '__main__':
 	user_codes, product_codes, data = rating()
 	metapath2vec_file(user_codes, product_codes, data)
-	node2vec_file()
+	node2vec_file(user_codes, product_codes, data)
