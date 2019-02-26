@@ -8,8 +8,8 @@ num_ratings = 270504
 def split(path, split_ratio, method):
 	test_file = '../svdfeature/svdfeature-1.2.2/demo/basicMF/'+method+'_test.txt'
 	train_file = '../svdfeature/svdfeature-1.2.2/demo/basicMF/'+method+'_train.txt'
-	test = open(test_file, 'w')
-	train = open(train_file, 'w')
+	test_f = open(test_file, 'w')
+	train_f = open(train_file, 'w')
 	i = 0
 	data = []
 	with open(path, 'r') as file:
@@ -20,11 +20,11 @@ def split(path, split_ratio, method):
 	train = data[:int(num_ratings*split_ratio)]
 	test = data[int(num_ratings*split_ratio):]
 	for t in train:
-		train_file.write(t)
+		train_f.write(t)
 	for t in test:
-		test_file.write(t)
-	test_file.close()
-	train_file.close()
+		test_f.write(t)
+	test_f.close()
+	train_f.close()
 
 def run_bmf(method):
 	os.chdir('../svdfeature/svdfeature-1.2.2/demo/basicMF/')
