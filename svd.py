@@ -95,7 +95,7 @@ def boi(user_codes, product_codes, data):
 		users = pickle.load(file)
 	emb_data = {**users, **prods}
 	i = 0
-	with open("metapath2vec/SVDFeature_input.txt", 'w') as file:
+	with open("cboi/SVDFeature_input.txt", 'w') as file:
 		for index, row in tqdm(data.iterrows()):
 			try:
 				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(100) + " " + str(100) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + str(emb_data[row['asin']])[1:-1].replace(", ", " "+ str(product_codes[row['asin']]) + ":") + "\n"
@@ -110,4 +110,5 @@ if __name__ == '__main__':
 	user_codes, product_codes, data = rating()
 	#metapath2vec_file(user_codes, product_codes, data)
 	#node2vec_file(user_codes, product_codes, data)
+	boi(user_codes, product_codes, data)
 
