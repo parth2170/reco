@@ -37,6 +37,7 @@ def run_bmf(method):
 
 if __name__ == '__main__':
 
+	'''
 	#Metapath2vec
 	num_ratings = 270504
 	print('Metapath2vec')
@@ -49,7 +50,11 @@ if __name__ == '__main__':
 	print('Node2vec')
 	split('node2vec/SVDFeature_input.txt', 0.7, 'node2vec', num_ratings = 270504)
 	run_bmf('node2vec')
-	
+	'''
+	num_ratings = 270504
+	print('CBOI')
+	split('cboi/SVDFeature_input.txt', 0.7, 'cboi', num_ratings = num_ratings)
+	run_bmf('cboi')
 
 
 
