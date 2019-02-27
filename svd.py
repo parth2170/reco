@@ -22,12 +22,14 @@ def rating():
 			except EOFError:
 				break
 	data = pd.DataFrame(data)
-	users = set(data['reviewerID'])
-	prods = set(data['asin'])
 	print("No. of product reviews = {}".format(len(data)))
 	print("num_users - {} num_prods - {}".format(len(users), len(prods)))
-	user_codes = {item:val for val,item in enumerate(users)}
-	product_codes = {item:val for val,item in enumerate(prods)}
+	with open('metapath2vec/user_prod_dict_mod.pickle', 'rb') as file:
+		users = pickle.load(file)
+	with open('metapath2vec/prod_user_dict_mod.pickle', 'rb') as file:
+		products = pickle.load(file)
+	user_codes = {item:val for val,item in enumerate(users.keys())}
+	product_codes = {item:val for val,item in enumerate(prods.keys())}
 	return user_codes, product_codes, data
 
 
