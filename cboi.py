@@ -5,6 +5,17 @@ from tqdm import tqdm
 
 print('Loading Images')
 pf = np.load('skip_gram/all.npy')
+
+def normalize(v):
+    norm = np.linalg.norm(v)
+    if norm == 0: 
+       return v
+    return v / norm
+
+#Normalizing product features
+for i in range(len(pf)):
+	pf[i] = normalize(pf[i])
+
 print('Loading Ids')
 pid = np.load('skip_gram/all_prod_feat_ref_list.npy')
 print('Making dictionary')
