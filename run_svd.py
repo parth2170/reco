@@ -56,6 +56,11 @@ if __name__ == '__main__':
 	split('cboi/SVDFeature_input.txt', 0.7, 'cboi', num_ratings = num_ratings)
 	run_bmf('cboi')
 
+	#num_ratings = 270504
+	#print('SKIP')
+	#split('skip_gram/SVDFeature_input.txt', 0.7, 'skip_gram', num_ratings = num_ratings)
+	#run_bmf('skip_gram')
+
 
 
 
