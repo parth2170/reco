@@ -11,6 +11,8 @@ def rating():
 		for line in tqdm(file):
 			#jline = ast.literal_eval(line.decode('UTF-8'))
 			i += 1
+			if i == 100:
+				break
 			try:
 				#jline = ast.literal_eval(line)
 				jline = ast.literal_eval(line.decode('UTF-8'))
@@ -109,10 +111,33 @@ def boi(user_codes, product_codes, data):
 				continue
 	print("Number of examples in SVDFeature = {}".format(i))
 
+def skip(user_codes, product_codes, data):
+	users = {}
+	with open('skip_gram/tmp/embeddings.epoch0.batch6220000.txt', 'r') as file:
+		for line in file:
+			temp = line.split(' ', 1)			
+			node = temp[0]
+			emb = list(map(float, temp[1][:-1].split()))
+			users[node] = emb
+	with open('cboi/prod_embed_cboi.pickle', 'rb') as file:
+		prods = pickle.load(file)
+	emb_data = {**users, **prods}
+	i = 0
+	with open("cboi/SVDFeature_input.txt", 'w') as file:
+		for index, row in tqdm(data.iterrows()):
+			try:
+				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(100) + " " + str(100) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + (" "+ str(product_codes[row['asin']]) + ":").join([str(x) for x in emb_data[row['asin']]]) + "\n"			
+				i +=1
+				file.write(line1)
+			except KeyError as error:
+				continue
+	print("Number of examples in SVDFeature = {}".format(i))
 
 if __name__ == '__main__':
+	user_codes, product_codes, data = None, None, None
 	user_codes, product_codes, data = rating()
 	#metapath2vec_file(user_codes, product_codes, data)
 	#node2vec_file(user_codes, product_codes, data)
 	boi(user_codes, product_codes, data)
+	skip(user_codes, product_codes, data)
 
