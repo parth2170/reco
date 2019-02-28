@@ -63,7 +63,7 @@ def node2vec_file(user_codes, product_codes, data):
 
 def metapath2vec_file(user_codes, product_codes, data):
 	emb_data = {}
-	with open('metapath2vec/metapath2vec_embeddings100.txt', 'r') as file:
+	with open('metapath2vec/metapath2vec_embeddings.txt', 'r') as file:
 		i = 0
 		for line in file:
 			if i <= 1:
@@ -73,6 +73,10 @@ def metapath2vec_file(user_codes, product_codes, data):
 			node = temp[0]
 			emb = list(map(float, temp[1][:-1].split()))
 			emb_data[node] = emb 
+		for i in emb_data:
+			print(str(emb_data[i]))
+			print(i)
+			break
 	print("No. of embeddings made = {}".format(len(emb_data)))
 
 	#Construct SVDFeature input file
@@ -98,7 +102,7 @@ def boi(user_codes, product_codes, data):
 	with open("cboi/SVDFeature_input.txt", 'w') as file:
 		for index, row in tqdm(data.iterrows()):
 			try:
-				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(100) + " " + str(100) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + str(emb_data[row['asin']])[1:-1].replace(", ", " "+ str(product_codes[row['asin']]) + ":") + "\n"
+				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(100) + " " + str(100) + " " + str(user_codes[row['reviewerID']]) + ":" + (" " + str(user_codes[row['reviewerID']]) + ":").join([str(x) for x in emb_data[row['reviewerID']]]) + " " + str(product_codes[row['asin']]) + ":" + (" "+ str(product_codes[row['asin']]) + ":").join([str(x) for x in emb_data[row['asin']]]) + "\n"
 				i +=1
 				file.write(line1)
 			except KeyError as error:
