@@ -31,6 +31,12 @@ class skipgram(nn.Module):
 		#Make weight matrix
 		print('Loading Embedding data')
 		feat = np.load(feat_path)
+		#Normalizing Images
+		for v in range(len(feat)):
+			norm = np.linalg.norm(feat[v])
+			if norm == 0:
+				continue
+			feat[v] = feat[v] / norm
 		plist = np.load(pord_list_path).tolist()
 		pord_list = dict(zip(plist, [i for i in range(len(plist))]))
 		del plist
