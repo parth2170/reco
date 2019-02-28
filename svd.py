@@ -11,8 +11,6 @@ def rating():
 		for line in tqdm(file):
 			#jline = ast.literal_eval(line.decode('UTF-8'))
 			i += 1
-			if i == 100:
-				break
 			try:
 				#jline = ast.literal_eval(line)
 				jline = ast.literal_eval(line.decode('UTF-8'))
@@ -123,7 +121,7 @@ def skip(user_codes, product_codes, data):
 		prods = pickle.load(file)
 	emb_data = {**users, **prods}
 	i = 0
-	with open("cboi/SVDFeature_input.txt", 'w') as file:
+	with open("skip_gram/SVDFeature_input.txt", 'w') as file:
 		for index, row in tqdm(data.iterrows()):
 			try:
 				line1 = str(int(row['overall'])) + " " + str(0) + " " + str(100) + " " + str(100) + " " + str(user_codes[row['reviewerID']]) + ":" + str(emb_data[row['reviewerID']])[1:-1].replace(", ", " " + str(user_codes[row['reviewerID']]) + ":") + " " + str(product_codes[row['asin']]) + ":" + (" "+ str(product_codes[row['asin']]) + ":").join([str(x) for x in emb_data[row['asin']]]) + "\n"			
