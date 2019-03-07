@@ -111,7 +111,7 @@ def boi(user_codes, product_codes, data):
 
 def skip(user_codes, product_codes, data):
 	users = {}
-	with open('skip_gram/tmp/embeddings.epoch0.batch6220000.txt', 'r') as file:
+	with open('skip_gram/tmp/embeddings.epoch1.batch3600000.txt', 'r') as file:
 		for line in file:
 			temp = line.split(' ', 1)			
 			node = temp[0]
@@ -136,6 +136,6 @@ if __name__ == '__main__':
 	user_codes, product_codes, data = rating()
 	#metapath2vec_file(user_codes, product_codes, data)
 	#node2vec_file(user_codes, product_codes, data)
-	boi(user_codes, product_codes, data)
+	#boi(user_codes, product_codes, data)
 	skip(user_codes, product_codes, data)
 
