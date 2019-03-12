@@ -160,8 +160,9 @@ def make_cold():
 	    if len(pu[i]) >= 13:
 	        cold[i] = pu[i]
 	ch = reverse_dict(cold)
-	for i in ch:
-		if len(up[i]) <= 1:
+	for i in list(ch.keys()):
+		if up[i] == ch[i]:
+			print('foo')
 			del ch[i]
 	cold = reverse_dict(ch)
 	print('Number of cold Products = {}'.format(len(cold)))
