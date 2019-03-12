@@ -54,7 +54,7 @@ def read_data(reviews, ispickle, min_rating):
 	print("\nData read")
 	return user_prod_dict, prod_user_dict
 
-def metapath_gen(user, numwalks, walklength, user_prod_dict, prod_user_dict):
+def metapath_gen(user, numwalks, walklength, user_prod_dict, prod_user_dict, cold):
 	outfile = []
 	user0 = user
 	for j in range(numwalks):
@@ -69,7 +69,10 @@ def metapath_gen(user, numwalks, walklength, user_prod_dict, prod_user_dict):
 				continue
 			prodid = random.randrange(nump)
 			prod = prods[prodid]
-			outline = outline+" "+prod
+			try:
+				cold[prod]
+			except:
+				outline = outline+" "+prod
 			try:
 				users = prod_user_dict[prod]
 			except KeyError as error:
@@ -141,16 +144,27 @@ def mod_dict(D, min_num):
 	print('Number of users = {}'.format(len(new_D)))
 	#Reduce number of users
 	num_users = 50000
-	random.seed(1000)
+	random.seed(777)
 	sample = random.sample(new_D.keys(), num_users)
 	sampled_dict = { your_key: new_D[your_key] for your_key in sample }
 	rD = reverse_dict(sampled_dict)
 	return sampled_dict, rD
 
-def main():
+def make_cold():
+	with open('metapath2vec/prod_user_dict_mod.pickle', 'rb') as file:
+	    pu = pickle.load(file)
+	cold = {}
+	for i in pu:
+	    if len(pu[i]) >= 13:
+	        cold[i] = pu[i]
+	print('Number of cold Products = {}'.format(len(cold)))
+	with open('metapath2vec/cold.pickle', 'wb') as file:
+		pickle.dump(cold, file)
+	return cold
 
-	numwalks = 50
-	walklength = 20
+def main():
+	numwalks = 30
+	walklength = 15
 	reviews = "data/reviews.json"
 	outpath = "metapath2vec/metapaths.txt"
 	embout = "reco/metapath2vec/metapath2vec_embeddings"
@@ -163,7 +177,7 @@ def main():
 	print("Enter 4 to run distance on generated embeddings")
 	task = int(input("Enter : "))
 	if task == 1:
-		user_prod_dict, prod_user_dict = read_data(reviews = reviews, ispickle = False, min_rating = 3)	
+		user_prod_dict, prod_user_dict = read_data(reviews = reviews, ispickle = False, min_rating = 1)	
 		print('Saving Dictionaries')
 		with open('metapath2vec/user_prod_dict.pickle', 'wb') as file:
 			pickle.dump(user_prod_dict, file)
@@ -183,9 +197,10 @@ def main():
 			pickle.dump(user_prod_dict, file)
 		with open('metapath2vec/prod_user_dict_mod.pickle', 'wb') as file:
 			pickle.dump(prod_user_dict, file)
+		cold = make_cold()
 		results = []
 		for user in tqdm(user_prod_dict):
-			results.append(metapath_gen(user = user, numwalks = numwalks, walklength = walklength, user_prod_dict = user_prod_dict, prod_user_dict = prod_user_dict))
+			results.append(metapath_gen(user = user, numwalks = numwalks, walklength = walklength, user_prod_dict = user_prod_dict, prod_user_dict = prod_user_dict, cold = cold))
 		print("Saving Metapaths at " + outpath)
 		with open(outpath, 'w') as file:
 			for paths in tqdm(results):

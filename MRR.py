@@ -7,16 +7,6 @@ from tqdm import tqdm
 def reverse_dict(D):
 	return {v: k for k, v in D.items()}
 
-def make_cold():
-	with open('metapath2vec/prod_user_dict_mod.pickle', 'rb') as file:
-	    pu = pickle.load(file)
-	cold = {}
-	for i in pu:
-	    if len(pu[i]) >= 13:
-	        cold[i] = pu[i]
-	print('Number of cold Products = {}'.format(len(cold)))
-	return cold
-
 def rank(prod, uf, pfc):
     d0 = {}
     for user in uf:
@@ -58,16 +48,14 @@ def Results(cold, pfc, uf):
 		rev_ranks = reverse_dict(ranks)
 		p5.append(P_at_M(cold, prod, rev_ranks, 5))
 		p10.append(P_at_M(cold, prod, rev_ranks, 10))
-		if check == 0:
-			break
-		check -= 1
 	print('MRR = {}'.format(np.average(np.array(MRR))))
 	print('recall = {}'.format(np.average(np.array(recall))))
 	print('p@5 = {}'.format(np.average(np.array(p5))))
 	print('p@10 = {}'.format(np.average(np.array(p10))))
 
 if __name__ == '__main__':
-	cold = make_cold()
+	with open('metapath2vec/cold.pickle', 'rb') as file:
+	    cold = pickle.load(file)
 	with open('cboi/user_embed_cboi.pickle', 'rb') as file:
 	    uf_cboi = pickle.load(file)
 	pf = {}

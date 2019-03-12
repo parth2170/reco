@@ -42,13 +42,16 @@ def prod_prod_edge():
 	return edges
 
 def graph():
-
+	with open('metapath2vec/cold.pickle', 'rb') as file:
+		cold = pickle.load(file)
+	e = list(cold.keys())
 	with open('metapath2vec/user_prod_dict_mod.pickle', 'rb') as file:
 		D = pickle.load(file)
 
 	ppe = prod_prod_edge()
 	G = nx.Graph(D)
 	G.add_edges_from(ppe)
+	G.remove_nodes_from(e)
 	print("\n++++++++++ Graph Information ++++++++++")
 	print(nx.info(G))
 
@@ -59,7 +62,7 @@ def graph():
 
 
 def node2vec(graph, name):
-	node2vec = Node2Vec(graph, dimensions=100, walk_length=15, num_walks=50, workers=int(psutil.cpu_count())) 
+	node2vec = Node2Vec(graph, dimensions=100, walk_length=15, num_walks=30, workers=int(psutil.cpu_count())) 
 	print("Saving paths as txt")
 	with open(outfiles+"sample_paths_node2vec{}.txt".format(name), 'w') as foo:
 		for q in node2vec.walks:
@@ -106,9 +109,7 @@ def build_svd_feat_file():
 	print("num_users - {} num_prods - {}".format(len(users), len(prods)))
 	user_codes = {item:val for val,item in enumerate(users)}
 	product_codes = {item:val for val,item in enumerate(prods)}
-
 	#Construct SVDFeature input file
-	
 	i = 0
 	with open(outfiles+"SVDFeature_input.txt", 'w') as file:
 		for index, row in data.iterrows():
@@ -132,31 +133,6 @@ def main():
 	if task == 2 or task == 4:
 		if G == None:
 			G = nx.read_gpickle(network_path+"network.gpickle")
-		'''
-		t1 = datetime.datetime.now()
-		print("Splitting graph into Two")
-		#bi = community.kernighan_lin_bisection(G)
-		bi = list(G.nodes())
-		random.shuffle(bi)
-		subG_size = int(len(bi)/2)
-		t2 = datetime.datetime.now()
-		print("Time taken = {}".format(t2-t1))
-		print("Making subgraphs")
-		g1 = G.subgraph(list(bi[:subG_size]))
-		g2 = G.subgraph(list(bi[subG_size:]))
-		print("Sub Graph 1 Information")
-		print(nx.info(g1))
-		print("Sub Graph 2 Information")
-		print(nx.info(g2))
-		del G
-		gc.collect()
-		print("Saving subgraphs")
-		nx.write_gpickle(g1, outfiles+"subnetwork1.gpickle")
-		nx.write_gpickle(g2, outfiles+"subnetwork2.gpickle")
-		t1 = datetime.datetime.now()
-		print("Time taken = {}".format(t1-t2))
-		node2vec(graph = g1, name = 1)
-		'''
 		node2vec(graph = G, name = 0)
 	if task == 3:
 		build_svd_feat_file()
