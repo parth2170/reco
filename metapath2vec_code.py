@@ -157,14 +157,16 @@ def make_cold():
 	    up = pickle.load(file)
 	cold = {}
 	for i in pu:
-	    if len(pu[i]) >= 13:
+	    if len(pu[i]) >= 12:
 	        cold[i] = pu[i]
 	ch = reverse_dict(cold)
+	rem = []
 	for i in list(ch.keys()):
-		if up[i] == ch[i]:
-			print('foo')
-			del ch[i]
-	cold = reverse_dict(ch)
+		if set(up[i]) == set(ch[i]):
+			rem.extend(ch[i])
+	rem = list(set(rem))
+	for i in rem:
+		del cold[i]
 	print('Number of cold Products = {}'.format(len(cold)))
 	with open('metapath2vec/cold.pickle', 'wb') as file:
 		pickle.dump(cold, file)

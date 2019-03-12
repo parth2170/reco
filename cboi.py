@@ -35,10 +35,12 @@ with open('metapath2vec/user_prod_dict_mod.pickle', 'rb') as file:
 c1 = 0
 for user in tqdm(up):
 	pfeat = []
+	if len(up[user]) == 0:
+		print('dafuk')
 	for prods in up[user]:
 		try:
 			cold[prods]
-		except KeyError as e:
+		except:
 			pfeat.append(prod_feat[prods])
 	if len(pfeat) == 0:
 		print('foo')
