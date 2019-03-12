@@ -40,6 +40,9 @@ for user in tqdm(up):
 			cold[prods]
 		except KeyError as e:
 			pfeat.append(prod_feat[prods])
+	if len(pfeat) == 0:
+		print('foo')
+		continue
 	user_feat[user] = np.average(pfeat, axis = 0)
 
 print('Products not found = {}'.format(c1))

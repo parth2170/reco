@@ -153,10 +153,17 @@ def mod_dict(D, min_num):
 def make_cold():
 	with open('metapath2vec/prod_user_dict_mod.pickle', 'rb') as file:
 	    pu = pickle.load(file)
+	with open('metapath2vec/user_prod_dict_mod.pickle', 'rb') as file:
+	    up = pickle.load(file)
 	cold = {}
 	for i in pu:
 	    if len(pu[i]) >= 13:
 	        cold[i] = pu[i]
+	ch = reverse_dict(cold)
+	for i in ch:
+		if len(up[i]) <= 1:
+			del ch[i]
+	cold = reverse_dict(ch)
 	print('Number of cold Products = {}'.format(len(cold)))
 	with open('metapath2vec/cold.pickle', 'wb') as file:
 		pickle.dump(cold, file)
