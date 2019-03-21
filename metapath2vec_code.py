@@ -143,7 +143,7 @@ def mod_dict(D, min_num):
 	new_D = reverse_dict(rD)
 	print('Number of users = {}'.format(len(new_D)))
 	#Reduce number of users
-	num_users = 50000
+	num_users = 10000
 	random.seed(777)
 	sample = random.sample(new_D.keys(), num_users)
 	sampled_dict = { your_key: new_D[your_key] for your_key in sample }
@@ -175,7 +175,7 @@ def make_cold():
 def main():
 	numwalks = 30
 	walklength = 15
-	reviews = "data/reviews.json"
+	reviews = "data/reviews_Musical_Instruments.json"
 	outpath = "metapath2vec/metapaths.txt"
 	embout = "reco/metapath2vec/metapath2vec_embeddings"
 	metapath2vec_dir = "../code_metapath2vec"
