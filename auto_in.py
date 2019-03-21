@@ -215,14 +215,14 @@ def image_to_npy(image_path, prod_cats):
 
 
 if __name__ == '__main__':
-	pc, u =read_meta('data/meta.json')
+	pc, u =read_meta('data/meta_Musical_Instruments.json')
 	with open('saved/prod_cats.pickle', 'rb') as file:
 		pc = pickle.load(file)
 	print("Dictionary Read")
 	for i in pc:
 		print('{}  {}'.format(i, len(pc[i])))
 	map(pc)
-	relation('data/meta.json', pc)
+	relation('data/meta_Musical_Instruments.json', pc)
 	#image_to_npy('data/image_features', pc)
 
 
