@@ -44,7 +44,7 @@ def read_meta(meta_data_path):
 								prod_cats[q] = []
 							prod_cats[q].append(prod_id)
 				if flag == 0:
-					print(prod_id)
+					print()
 			except KeyError as error:
 				unrelated.append(jline['asin'])
 	for cat in prod_cats:
@@ -80,23 +80,23 @@ def relation(meta_data_path, prod_cats):
 				dt = dict((k, jline[k]) for k in ('asin', 'related', 'categories'))
 			except KeyError as error:
 				continue
-
 			prod_id = dt['asin']
-			tcat = map_dict[prod_id]
+			#tcat = map_dict[prod_id]
 			bt = dt['related']
 			for relation in bt:
 				rel_p = bt[relation]
-				temp = []
-				for t in rel_p:
-					try:
-						for j in map_dict[t]:
-							if j in tcat:
-								temp.append(t)
-								break
-					except KeyError:
-						continue
-				rel_p = temp
+				# temp = []
+				# for t in rel_p:
+				# 	try:
+				# 		for j in map_dict[t]:
+				# 			if j in tcat:
+				# 				temp.append(t)
+				# 				break
+				# 	except KeyError:
+				# 		continue
+				# rel_p = temp
 				line = str(prod_id) + " " + str(relation) + " " + ' '.join(rel_p) + "\n"
+				print(line)
 				if relation == 'also_bought':
 					ab.write(line)
 				elif relation == 'also_viewed':
@@ -215,14 +215,14 @@ def image_to_npy(image_path, prod_cats):
 
 
 if __name__ == '__main__':
-	pc, u =read_meta('data/meta_Musical_Instruments.json')
-	with open('saved/prod_cats.pickle', 'rb') as file:
-		pc = pickle.load(file)
-	print("Dictionary Read")
-	for i in pc:
-		print('{}  {}'.format(i, len(pc[i])))
-	map(pc)
-	relation('data/meta_Musical_Instruments.json', pc)
+	#pc, u =read_meta('data/meta_Musical_Instruments.json')
+	#with open('saved/prod_cats.pickle', 'rb') as file:
+	#	pc = pickle.load(file)
+	#print("Dictionary Read")
+	#for i in pc:
+	#	print('{}  {}'.format(i, len(pc[i])))
+	#map(pc)
+	relation('data/meta_Musical_Instruments.json', prod_cats = None)
 	#image_to_npy('data/image_features', pc)
 
 
