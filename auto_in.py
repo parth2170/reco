@@ -131,9 +131,9 @@ def readImageFeatures(path):
     yield asin, a.tolist()
 
 def saver(cat_prod, cat_feat, n, all_feat_list, all_prod_feat_ref_list):
-	for cat in cat_prod:
-		np.save('saved/{}{}_prod_feat_ref_list.npy'.format(cat, str(n)), cat_prod[cat])
-		np.save('saved/{}{}.npy'.format(cat, str(n)), cat_feat[cat])
+	#for cat in cat_prod:
+	#	np.save('saved/{}{}_prod_feat_ref_list.npy'.format(cat, str(n)), cat_prod[cat])
+	#	np.save('saved/{}{}.npy'.format(cat, str(n)), cat_feat[cat])
 	
 	np.save("saved/all{}_prod_feat_ref_list.npy".format(str(n)), all_prod_feat_ref_list)
 	np.save("saved/all{}.npy".format(str(n)), all_feat_list)
@@ -173,9 +173,9 @@ def image_to_npy(image_path, prod_cats):
 			# 			cat_feat[cat] = []
 			# 			cat_prod[cat].append(im)
 			# 			cat_feat[cat].append(ft)
-
-			except KeyError:
-				dummy += 1
+			#
+			# except KeyError:
+			# 	dummy += 1
 
 			if i%100000 == 0:
 				print("Saving")
@@ -191,9 +191,8 @@ def image_to_npy(image_path, prod_cats):
 				all_feat_list = []
 				gc.collect()
 				flag = 0
-
 			del image
-			gc.collect()
+
 	except EOFError:
 		print("Saving")
 		saver(cat_prod, cat_feat, j, all_feat_list, all_prod_feat_ref_list)
@@ -214,15 +213,15 @@ def image_to_npy(image_path, prod_cats):
 
 
 if __name__ == '__main__':
-	pc, u =read_meta('data/meta.json')
+	#pc, u =read_meta('data/meta.json')
 	with open('saved/prod_cats.pickle', 'rb') as file:
 		pc = pickle.load(file)
-	print("Dictionary Read")
-	for i in pc:
-		print('{}  {}'.format(i, len(pc[i])))
+	#print("Dictionary Read")
+	#for i in pc:
+	#	print('{}  {}'.format(i, len(pc[i])))
 	map(pc)
-	relation('data/meta.json', prod_cats = None)
-	#image_to_npy('data/image_features', pc)
+	#relation('data/meta.json', prod_cats = None)
+	image_to_npy('data/image_features', pc)
 
 
 
