@@ -162,17 +162,17 @@ def image_to_npy(image_path, prod_cats):
 			all_prod_feat_ref_list.append(im)
 			all_feat_list.append(ft)
 			tcat = None
-			try:
-				tcat = set(map_dict[im])
-				for cat in list(prod_cats.intersection(tcat)):
-					try:
-						cat_prod[cat].append(im)
-						cat_feat[cat].append(ft)
-					except KeyError:
-						cat_prod[cat] = []
-						cat_feat[cat] = []
-						cat_prod[cat].append(im)
-						cat_feat[cat].append(ft)
+			# try:
+			# 	tcat = set(map_dict[im])
+			# 	for cat in list(prod_cats.intersection(tcat)):
+			# 		try:
+			# 			cat_prod[cat].append(im)
+			# 			cat_feat[cat].append(ft)
+			# 		except KeyError:
+			# 			cat_prod[cat] = []
+			# 			cat_feat[cat] = []
+			# 			cat_prod[cat].append(im)
+			# 			cat_feat[cat].append(ft)
 
 			except KeyError:
 				dummy += 1
